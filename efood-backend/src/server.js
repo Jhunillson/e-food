@@ -91,6 +91,11 @@ const startServer = async () => {
         await sequelize.authenticate();
         console.log('✅ Conectado ao banco de dados');
 
+        // ADICIONE ESTA LINHA ABAIXO:
+        // alter: true ajusta as tabelas se você mudar algo no model futuramente
+        await sequelize.sync({ alter: true }); 
+        console.log('✅ Tabelas sincronizadas/criadas com sucesso');
+
         server.listen(PORT, '0.0.0.0', () => {
             console.log(`🚀 Servidor com SOCKET.IO rodando na porta ${PORT}`);
         });
@@ -99,7 +104,6 @@ const startServer = async () => {
         process.exit(1);
     }
 };
-
 
 // START
 startServer();
