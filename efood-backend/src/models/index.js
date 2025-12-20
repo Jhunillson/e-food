@@ -1,4 +1,9 @@
-const { sequelize } = require('../config/database');
+const { Sequelize } = require('sequelize');
+const config = require('../config/database');
+
+const env = process.env.NODE_ENV || 'development';
+const sequelize = new Sequelize(config[env]);
+
 const User = require('./User');
 const Restaurant = require('./Restaurant');
 const MenuItem = require('./MenuItem');
