@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rastrear Pedido - eFood</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            padding: 2rem;
+        }
+
+        .track-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .track-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .track-header h1 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .order-status {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .status-timeline {
+            position: relative;
+            padding-left: 3rem;
+        }
+
+        .status-step {
+            position: relative;
+            padding-bottom: 2rem;
+        }
+
+        .status-step:last-child {
+            padding-bottom: 0;
+        }
+
+        .status-step::before {
+            content: '';
+            position: absolute;
+            left: -2rem;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            border: 3px solid #e0e0e0;
+        }
+
+        .status-step.completed::before {
+            background: #48c774;
+            border-color: #48c774;
+        }
+
+        .status-step.active::before {
+            background: #667eea;
+            border-color: #667eea;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .status-step::after {
+            content: '';
+            position: absolute;
+            left: -1.5rem;
+            top: 20px;
+            width: 2px;
+            height: calc(100% - 20px);
+            background: #e0e0e0;
+        }
+
+        .status-step:last-child::after {
+            display: none;
+        }
+
+        .status-step.completed::after {
+            background: #48c774;
+        }
+
+        .status-title {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .status-time {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .delivery-info {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .delivery-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
+        }
+
+        .delivery-card h3 {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.8rem;
+            padding: 0.8rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+
+        .info-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-icon {
+            font-size: 1.5rem;
+        }
+
+        .info-text {
+            flex: 1;
+        }
+
+        .info-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .info-value {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .btn-back {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            background: #667eea;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .btn-back:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="track-container">
+        <div class="track-header">
+            <h1>🚚 Rastreamento do Pedido</h1>
+            <p id="orderNumber">Pedido #000</p>
+        </div>
+
+        <div class="order-status">
+            <h2 style="margin-bottom: 1.5rem;">Status da Entrega</h2>
+            <div class="status-timeline" id="statusTimeline">
+                <!-- Status será preenchido aqui -->
+            </div>
+        </div>
+
+        <div class="delivery-info" id="deliveryInfo" style="display: none;">
+            <h2 style="margin-bottom: 1rem;">👤 Informações do Entregador</h2>
+            <div class="delivery-card">
+                <h3>🛵 Seu Entregador</h3>
+                <div class="info-row">
+                    <div class="info-icon">👤</div>
+                    <div class="info-text">
+                        <div class="info-label">Nome:</div>
+                        <div class="info-value" id="deliveryName">-</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-icon">📱</div>
+                    <div class="info-text">
+                        <div class="info-label">Telefone:</div>
+                        <div class="info-value" id="deliveryPhone">-</div>
+                    </div>
+                </div>
+                <div class="info-row" id="vehiclePlateRow" style="display: none;">
+                    <div class="info-icon">🚗</div>
+                    <div class="info-text">
+                        <div class="info-label">Matrícula:</div>
+                        <div class="info-value" id="vehiclePlate">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <a href="orders.html" class="btn-back">← Voltar para Meus Pedidos</a>
+    </div>
+
+    <script src="api.js"></script>
+    <script src="track-order.js"></script>
+</body>
+</html>

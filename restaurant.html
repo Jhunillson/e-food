@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ombbia</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="restaurant.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+    
+            <div class="" onclick="window.location.href='index.html'" style="cursor: pointer;"><img src="public/image/ombbia1.png" alt="Ombbia" style="max-height:90px;"></div>
+            <nav>
+                <a href="index.html">Início</a>
+                <a href="index.html#restaurants">Restaurantes</a>
+              
+                <div class="cart-icon" onclick="toggleCart()">
+                    🛒 <span class="cart-count">0</span>
+                </div>
+                
+                <!-- Área de autenticação (será atualizada dinamicamente) -->
+                <div class="auth-area" id="authArea">
+                    <!-- Quando não logado -->
+                    <a href="auth.html" class="btn-login" id="loginBtn">Entrar</a>
+                    
+                    <!-- Quando logado (inicialmente oculto) -->
+                    <div class="user-menu" id="userMenu" style="display: none;">
+                        <div class="user-profile">
+                            <div class="user-avatar">👤</div>
+                            <span class="user-name" id="userName">Usuário</span>
+                        </div>
+                        <div class="user-dropdown">
+                            <a href="orders.html">Meus Pedidos</a>
+                            <a href="profile.html">Meu Perfil</a>
+                            <a href="#" onclick="logout(); return false;">Sair</a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Restaurant Header -->
+    <section class="restaurant-header">
+        <div class="restaurant-banner">
+            <div class="banner-overlay">
+                <div class="restaurant-main-info">
+                    <div class="restaurant-icon-large" id="restaurantIcon">🍕</div>
+                    <div>
+                        <h1 id="restaurantName">Carregando...</h1>
+                        <p id="restaurantCuisine">Carregando...</p>
+                        <div class="restaurant-meta">
+                            <span class="rating">⭐ <span id="restaurantRating">4.5</span></span>
+                            <span>🕐 <span id="restaurantTime">30-40 min</span></span>
+                            <span>💰 Entrega: Kz 500,00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Menu Section -->
+    <section class="menu-section">
+        <div class="menu-container">
+            <!-- Menu Categories -->
+            <div class="menu-categories">
+                <button class="category-btn active" data-category="all">Todos</button>
+                <button class="category-btn" data-category="pizza">Pizzas</button>
+                <button class="category-btn" data-category="bebidas">Bebidas</button>
+                <button class="category-btn" data-category="sobremesas">Sobremesas</button>
+            </div>
+
+            <!-- Menu Items Grid -->
+            <div class="menu-grid" id="menuGrid">
+                <!-- Items serão inseridos aqui via JavaScript -->
+            </div>
+        </div>
+
+        <!-- Carrinho Lateral -->
+        <div class="cart-sidebar" id="cartSidebar">
+            <div class="cart-header">
+                <h3>🛒 Seu Pedido</h3>
+                <button class="close-cart" onclick="toggleCart()">✕</button>
+            </div>
+
+            <div class="cart-items" id="cartItems">
+                <div class="empty-cart">
+                    <p>Seu carrinho está vazio</p>
+                    <p>Adicione itens do cardápio!</p>
+                </div>
+            </div>
+
+            <div class="cart-footer">
+                <div class="cart-total">
+                    <span>Subtotal:</span>
+                    <span id="cartSubtotal">Kz 0,00</span>
+                </div>
+                <div class="cart-total">
+                    <span>Taxa de entrega:</span>
+                    <span>Kz 500,00</span>
+                </div>
+                <div class="cart-total total">
+                    <span><strong>Total:</strong></span>
+                    <span id="cartTotal"><strong>Kz 0,00</strong></span>
+                </div>
+                <button class="btn-checkout" onclick="checkout()">Finalizar Pedido</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Scripts -->
+    <script src="api.js"></script>
+    <script src="auth-check.js"></script>
+    <script src="restaurant.js"></script>  
+</body>
+</html>

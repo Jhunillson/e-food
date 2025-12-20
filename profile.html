@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Perfil - eFood</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="profile.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="" onclick="window.location.href='index.html'" style="cursor: pointer;"><img src="public/image/Ombbia1.png" alt="Ombbia" style="max-height: 60px;"></div>
+            <nav>
+                <a href="index.html">Início</a>
+                <a href="index.html#restaurants">Restaurantes</a>
+                <a href="orders.html">Meus Pedidos</a>
+                <a href="profile.html" class="active">Perfil</a>
+                <a href="#" class="btn-login" id="userNameBtn">Usuário</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Profile Section -->
+    <section class="profile-section">
+        <div class="profile-container">
+            <!-- Sidebar -->
+            <div class="profile-sidebar">
+                <div class="profile-avatar">
+                    <div class="avatar-circle" id="avatarCircle">👤</div>
+                    <h3 id="userName">Carregando...</h3>
+                    <p id="userEmail">email@exemplo.com</p>
+                </div>
+
+                <nav class="profile-menu">
+                    <a href="#" class="menu-item active" onclick="showSection('personal')">
+                        <span class="menu-icon">👤</span>
+                        Dados Pessoais
+                    </a>
+                    <a href="#" class="menu-item" onclick="showSection('addresses')">
+                        <span class="menu-icon">📍</span>
+                        Endereços
+                    </a>
+                    <a href="#" class="menu-item" onclick="showSection('payments')">
+                        <span class="menu-icon">💳</span>
+                        Pagamentos
+                    </a>
+                    <a href="#" class="menu-item" onclick="showSection('security')">
+                        <span class="menu-icon">🔒</span>
+                        Segurança
+                    </a>
+                    <a href="#" class="menu-item logout" onclick="logout()">
+                        <span class="menu-icon">🚪</span>
+                        Sair
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Content -->
+            <div class="profile-content">
+                <!-- Dados Pessoais -->
+                <div class="content-section active" id="personalSection">
+                    <h2>👤 Dados Pessoais</h2>
+                    <p class="section-subtitle">Gerencie suas informações pessoais</p>
+
+                    <form id="personalForm" onsubmit="savePersonalData(event)">
+                        <div class="form-group">
+                            <label for="editName">Nome Completo</label>
+                            <input type="text" id="editName" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="editEmail">E-mail</label>
+                            <input type="email" id="editEmail" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="editPhone">Telefone</label>
+                            <input type="tel" id="editPhone" placeholder="9XX XXX XXX" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="editBirthdate">Data de Nascimento</label>
+                            <input type="date" id="editBirthdate">
+                        </div>
+
+                        <button type="submit" class="btn-save">Salvar Alterações</button>
+                    </form>
+                </div>
+
+                <!-- Endereços -->
+                <div class="content-section" id="addressesSection">
+                    <div class="section-header">
+                        <div>
+                            <h2>📍 Meus Endereços</h2>
+                            <p class="section-subtitle">Gerencie seus endereços de entrega</p>
+                        </div>
+                        <button class="btn-add" onclick="addNewAddress()">+ Adicionar Endereço</button>
+                    </div>
+
+                    <div class="addresses-grid" id="addressesGrid">
+                        <div class="empty-state">
+                            <p>Nenhum endereço cadastrado ainda</p>
+                            <button class="btn-secondary" onclick="addNewAddress()">Adicionar primeiro endereço</button>
+                        </div>
+                    </div>
+                   
+                </div>
+
+                <!-- Pagamentos -->
+                <div class="content-section" id="paymentsSection">
+                    <div class="section-header">
+                        <div>
+                            <h2>💳 Métodos de Pagamento</h2>
+                            <p class="section-subtitle">Gerencie suas formas de pagamento</p>
+                        </div>
+                        <button class="btn-add" onclick="addNewPayment()">+ Adicionar Cartão</button>
+                    </div>
+
+                    <div class="payments-grid" id="paymentsGrid">
+                        <div class="empty-state">
+                            <p>Nenhum cartão cadastrado ainda</p>
+                            <button class="btn-secondary" onclick="addNewPayment()">Adicionar primeiro cartão</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Segurança -->
+                <div class="content-section" id="securitySection">
+                    <h2>🔒 Segurança</h2>
+                    <p class="section-subtitle">Altere sua senha e configurações de segurança</p>
+
+                    <form id="passwordForm" onsubmit="changePassword(event)">
+                        <div class="form-group">
+                            <label for="currentPassword">Senha Atual</label>
+                            <input type="password" id="currentPassword" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="newPassword">Nova Senha</label>
+                            <input type="password" id="newPassword" minlength="6" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirmNewPassword">Confirmar Nova Senha</label>
+                            <input type="password" id="confirmNewPassword" minlength="6" required>
+                        </div>
+
+                        <button type="submit" class="btn-save">Alterar Senha</button>
+                    </form>
+
+                    <div class="danger-zone">
+                        <h3>⚠️ Zona de Perigo</h3>
+                        <p>Ações irreversíveis na sua conta</p>
+                        <button class="btn-danger" onclick="deleteAccount()">Excluir Conta</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="profile.js"></script>
+</body>
+</html>

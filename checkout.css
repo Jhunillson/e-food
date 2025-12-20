@@ -1,0 +1,796 @@
+/* Checkout Section */
+.checkout-section {
+    background: #f8f9fa;
+    min-height: calc(100vh - 80px);
+    padding: 2rem;
+}
+
+.checkout-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* ========================================
+   PROGRESS BAR - VERTICAL LIMPO
+   ======================================== */
+.checkout-progress {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 3rem;
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    gap: 2rem;
+}
+
+.progress-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Números dos Steps */
+.step-number {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #e0e0e0;
+    color: #999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    transition: all 0.3s;
+}
+
+.progress-step.active .step-number {
+    background: #ff6b35;
+    color: white;
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+    transform: scale(1.1);
+}
+
+.progress-step.completed .step-number {
+    background: #48c774;
+    color: white;
+}
+
+.step-label {
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.progress-step.active .step-label {
+    color: #ff6b35;
+    font-weight: bold;
+}
+
+/* Linha entre steps */
+.progress-line {
+    width: 100px;
+    height: 3px;
+    background: #e0e0e0;
+}
+
+.progress-step.completed ~ .progress-line {
+    background: #48c774;
+}
+
+/* ========================================
+   ADDRESS SELECTOR - APARECE/DESAPARECE
+   ======================================== */
+.address-info-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.address-current {
+    color: white;
+}
+
+.address-current-label {
+    font-size: 0.85rem;
+    opacity: 0.9;
+    margin-bottom: 0.3rem;
+}
+
+.address-current-text {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.btn-change-address {
+    padding: 0.6rem 1.5rem;
+    background: white;
+    color: #667eea;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.btn-change-address:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* Modal do Address Selector */
+.address-selector-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s;
+}
+
+.address-selector-modal.active {
+    display: flex;
+}
+
+.address-selector-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    max-width: 500px;
+    width: 90%;
+    animation: slideUp 0.3s;
+}
+
+.address-selector-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.address-selector-header h3 {
+    color: #333;
+    font-size: 1.4rem;
+    margin: 0;
+}
+
+.btn-close-modal {
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    color: #999;
+    cursor: pointer;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s;
+}
+
+.btn-close-modal:hover {
+    background: #f0f0f0;
+    color: #333;
+}
+
+.address-selector-body {
+    margin-bottom: 1.5rem;
+}
+
+.address-selector-body label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #666;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.address-selector-body select {
+    width: 100%;
+    padding: 0.8rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.address-selector-body select:hover {
+    border-color: #ff6b35;
+}
+
+.address-selector-body select:focus {
+    outline: none;
+    border-color: #ff6b35;
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+.address-selector-footer {
+    display: flex;
+    gap: 1rem;
+}
+
+.btn-confirm-address {
+    flex: 1;
+    padding: 0.8rem;
+    background: #ff6b35;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 1rem;
+}
+
+.btn-confirm-address:hover {
+    background: #e55a2b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+}
+
+.btn-manage-address {
+    flex: 1;
+    padding: 0.8rem;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 1rem;
+}
+
+.btn-manage-address:hover {
+    background: #556cd6;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* ========================================
+   CHECKOUT CONTENT
+   ======================================== */
+.checkout-content {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 2rem;
+}
+
+.checkout-form {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.checkout-step {
+    animation: fadeIn 0.4s;
+}
+
+.checkout-step.hidden {
+    display: none;
+}
+
+.checkout-step h2 {
+    color: #333;
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+}
+
+/* Form Styles */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #333;
+    font-weight: 600;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #ff6b35;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.form-group-small {
+    max-width: 150px;
+}
+
+/* Payment Methods */
+.payment-methods {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.payment-option {
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.payment-option:hover {
+    border-color: #ff6b35;
+    background: #fff5f2;
+    transform: translateY(-2px);
+}
+
+.payment-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+}
+
+.payment-option.selected {
+    border-color: #ff6b35;
+    background: #fff5f2;
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.2);
+}
+
+.payment-option label {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    margin: 0;
+    font-weight: 600;
+}
+
+.payment-icon {
+    font-size: 2rem;
+}
+
+/* Card and Money Forms */
+.card-form,
+.money-form {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid #f0f0f0;
+    animation: slideDown 0.3s;
+}
+
+/* Buttons */
+.btn-next,
+.btn-back,
+.btn-finish {
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-next,
+.btn-finish {
+    background: #ff6b35;
+    color: white;
+    width: 100%;
+}
+
+.btn-next:hover,
+.btn-finish:hover {
+    background: #e55a2b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+}
+
+.btn-finish {
+    background: #48c774;
+    font-size: 1.2rem;
+    padding: 1.2rem;
+}
+
+.btn-finish:hover {
+    background: #3ab864;
+    box-shadow: 0 4px 15px rgba(72, 199, 116, 0.3);
+}
+
+.btn-back {
+    background: #f0f0f0;
+    color: #666;
+}
+
+.btn-back:hover {
+    background: #e0e0e0;
+    transform: translateY(-2px);
+}
+
+.checkout-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.checkout-buttons .btn-back {
+    flex: 0 0 150px;
+}
+
+.checkout-buttons .btn-next {
+    flex: 1;
+}
+
+/* Confirmation */
+.confirmation-section {
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.confirmation-section:last-of-type {
+    border-bottom: none;
+}
+
+.confirmation-section h3 {
+    color: #333;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.confirmation-info {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    color: #666;
+    line-height: 1.6;
+}
+
+.confirmation-items {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.confirmation-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.8rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+/* Order Summary Sidebar */
+.order-summary {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 100px;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+}
+
+.order-summary h3 {
+    color: #333;
+    margin-bottom: 1.5rem;
+    font-size: 1.3rem;
+}
+
+.summary-restaurant {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+}
+
+.summary-restaurant .restaurant-icon {
+    font-size: 3rem;
+}
+
+.restaurant-name {
+    font-weight: bold;
+    color: #333;
+}
+
+.restaurant-time {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.summary-items {
+    margin-bottom: 1.5rem;
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.summary-item-info {
+    flex: 1;
+}
+
+.summary-item-name {
+    color: #333;
+    font-weight: 500;
+    margin-bottom: 0.3rem;
+}
+
+.summary-item-quantity {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.summary-item-price {
+    color: #ff6b35;
+    font-weight: bold;
+}
+
+.summary-totals {
+    padding-top: 1rem;
+    border-top: 2px solid #f0f0f0;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.8rem;
+    color: #666;
+}
+
+.summary-row.summary-total {
+    font-size: 1.2rem;
+    color: #333;
+    margin-top: 0.5rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid #f0f0f0;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        max-height: 0;
+    }
+    to {
+        opacity: 1;
+        max-height: 500px;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ========================================
+   RESPONSIVO
+   ======================================== */
+
+/* Tablet Grande: 1024px - 1199px */
+@media (max-width: 1199px) {
+    .checkout-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .order-summary {
+        position: static;
+        max-height: none;
+    }
+}
+
+/* Tablet: 768px - 1023px */
+@media (max-width: 1023px) {
+    .checkout-section {
+        padding: 1.5rem;
+    }
+    
+    .checkout-progress {
+        padding: 1.5rem;
+    }
+    
+    .progress-line {
+        width: 80px;
+    }
+    
+    .payment-methods {
+        grid-template-columns: 1fr;
+    }
+    
+    .address-selector-content {
+        width: 85%;
+    }
+}
+
+/* Mobile Grande: 600px - 767px */
+@media (max-width: 767px) {
+    .checkout-section {
+        padding: 1rem;
+    }
+    
+    .checkout-progress {
+        padding: 1rem;
+    }
+    
+    .step-number {
+        width: 45px;
+        height: 45px;
+        font-size: 1.1rem;
+    }
+    
+    .step-label {
+        font-size: 0.85rem;
+    }
+    
+    .progress-line {
+        width: 60px;
+    }
+    
+    .address-info-banner {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .btn-change-address {
+        width: 100%;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .checkout-buttons {
+        flex-direction: column;
+    }
+    
+    .checkout-buttons .btn-back {
+        flex: 1;
+    }
+    
+    .checkout-form {
+        padding: 1.5rem;
+    }
+    
+    .checkout-step h2 {
+        font-size: 1.5rem;
+    }
+    
+    .address-selector-content {
+        width: 90%;
+        padding: 1.5rem;
+    }
+}
+
+/* Mobile Pequeno: < 600px */
+@media (max-width: 599px) {
+    .checkout-progress {
+        padding: 0.8rem;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .progress-step {
+        width: 100%;
+    }
+    
+    .step-number {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    
+    .progress-line {
+        display: none;
+    }
+    
+    .address-info-banner {
+        padding: 0.8rem 1rem;
+    }
+    
+    .address-current-text {
+        font-size: 1rem;
+    }
+    
+    .btn-change-address {
+        font-size: 0.85rem;
+        padding: 0.5rem 1rem;
+    }
+    
+    .payment-option {
+        padding: 1rem;
+    }
+    
+    .payment-option label {
+        font-size: 0.9rem;
+    }
+    
+    .payment-icon {
+        font-size: 1.5rem;
+    }
+    
+    .checkout-form {
+        padding: 1rem;
+    }
+    
+    .checkout-step h2 {
+        font-size: 1.3rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .address-selector-content {
+        width: 95%;
+        padding: 1.2rem;
+    }
+    
+    .address-selector-footer {
+        flex-direction: column;
+    }
+}
+
+/* Ajustes para telas muito pequenas */
+@media (max-width: 400px) {
+    .checkout-buttons .btn-back,
+    .checkout-buttons .btn-next,
+    .btn-finish {
+        font-size: 1rem;
+        padding: 0.8rem 1rem;
+    }
+    
+    .address-selector-header h3 {
+        font-size: 1.2rem;
+    }
+}

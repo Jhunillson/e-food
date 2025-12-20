@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - eFood</title>
+    <link rel="stylesheet" href="admin-style.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>🔐 Admin Panel</h2>
+            <p id="adminName">Administrador</p>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" onclick="showSection('dashboard')">
+                <span class="nav-icon">📊</span>
+                <span class="nav-text">Dashboard</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showSection('restaurants')">
+                <span class="nav-icon">🏪</span>
+                <span class="nav-text">Restaurantes</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showSection('deliveries')">
+                <span class="nav-icon">🛵</span>
+                <span class="nav-text">Entregadores</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showSection('orders')">
+                <span class="nav-icon">📦</span>
+                <span class="nav-text">Pedidos</span>
+            </a>
+          
+            <!-- 🆕 NOVA ABA DE APROVAÇÃO -->
+            <a href="#" class="nav-item" onclick="showSection('pending-approvals')">
+                <span class="nav-icon">⏳</span>
+                <span class="nav-text">Aprovar Pedidos</span>
+                <span class="pending-badge" id="pendingBadge" style="display: none;">0</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showSection('revenue')">
+                <span class="nav-icon">💰</span>
+                <span class="nav-text">Receita</span>
+            </a>
+          
+        </nav>
+
+        <button class="btn-logout" onclick="logout()">
+            <span>🚪</span> Sair
+        </button>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="top-header">
+            <h1 id="pageTitle">Dashboard</h1>
+            <div class="header-actions">
+                <span class="date" id="currentDate"></span>
+            </div>
+        </header>
+
+        <!-- Dashboard Section -->
+        <section id="dashboardSection" class="content-section active">
+            <div class="stats-grid">
+                <div class="stat-card blue">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-info">
+                        <div class="stat-label">Total de Usuários</div>
+                        <div class="stat-value" id="totalUsers">0</div>
+                    </div>
+                </div>
+
+                <div class="stat-card orange">
+                    <div class="stat-icon">🏪</div>
+                    <div class="stat-info">
+                        <div class="stat-label">Restaurantes</div>
+                        <div class="stat-value" id="totalRestaurants">0</div>
+                        <div class="stat-sub">
+                            <span class="active-count" id="activeRestaurants">0</span> ativos
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card purple">
+                    <div class="stat-icon">🛵</div>
+                    <div class="stat-info">
+                        <div class="stat-label">Entregadores</div>
+                        <div class="stat-value" id="totalDeliveries">0</div>
+                        <div class="stat-sub">
+                            <span class="active-count" id="activeDeliveries">0</span> ativos
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card green">
+                    <div class="stat-icon">📦</div>
+                    <div class="stat-info">
+                        <div class="stat-label">Pedidos Hoje</div>
+                        <div class="stat-value" id="todayOrders">0</div>
+                        <div class="stat-sub">
+                            <span class="active-count" id="completedOrders">0</span> concluídos
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="revenue-section">
+                <div class="revenue-card">
+                    <h3>💰 Receita Total</h3>
+                    <div class="revenue-amount" id="totalRevenue">Kz 0,00</div>
+                    <div class="revenue-detail">
+                        <strong>Lucro da Plataforma (20%):</strong>
+                        <span id="platformRevenue">Kz 0,00</span>
+                    </div>
+                </div>
+
+                <div class="revenue-card highlight">
+                    <h3>📈 Receita Hoje</h3>
+                    <div class="revenue-amount" id="todayRevenue">Kz 0,00</div>
+                    <div class="revenue-detail">
+                        <strong>Lucro da Plataforma (20%):</strong>
+                        <span id="platformRevenueToday">Kz 0,00</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-section">
+                <h3>📊 Receita dos Últimos 7 Dias</h3>
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Restaurants Section -->
+        <section id="restaurantsSection" class="content-section">
+            <div class="section-header">
+                <h2>🏪 Gerenciar Restaurantes</h2>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" onclick="filterRestaurants('all')">Todos</button>
+                    <button class="filter-btn" onclick="filterRestaurants('active')">Ativos</button>
+                    <button class="filter-btn" onclick="filterRestaurants('inactive')">Inativos</button>
+                </div>
+            </div>
+            <div id="restaurantsList" class="list-container"></div>
+        </section>
+
+        <!-- Deliveries Section -->
+        <section id="deliveriesSection" class="content-section">
+            <div class="section-header">
+                <h2>🛵 Gerenciar Entregadores</h2>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" onclick="filterDeliveries('all')">Todos</button>
+                    <button class="filter-btn" onclick="filterDeliveries('active')">Ativos</button>
+                    <button class="filter-btn" onclick="filterDeliveries('inactive')">Inativos</button>
+                </div>
+            </div>
+            <div id="deliveriesList" class="list-container"></div>
+        </section>
+
+        <!-- Orders Section -->
+        <section id="ordersSection" class="content-section">
+            <div class="section-header">
+                <h2>📦 Todos os Pedidos</h2>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" onclick="filterOrders('all')">Todos</button>
+                    <button class="filter-btn" onclick="filterOrders('pending')">Pendentes</button>
+                    <button class="filter-btn" onclick="filterOrders('completed')">Concluídos</button>
+                </div>
+            </div>
+            <div id="ordersList" class="list-container"></div>
+        </section>
+
+        <!-- Revenue Section -->
+        <section id="revenueSection" class="content-section">
+            <h2>💰 Análise de Receita</h2>
+            
+            <div class="revenue-explanation">
+                <h3>📊 Como funciona a receita da plataforma:</h3>
+                <div class="explanation-grid">
+                    <div class="explanation-card">
+                        <div class="explanation-icon">🍕</div>
+                        <h4>Pedidos</h4>
+                        <p>A plataforma recebe <strong>20%</strong> do subtotal de cada pedido</p>
+                    </div>
+                    <div class="explanation-card">
+                        <div class="explanation-icon">🚚</div>
+                        <h4>Entrega</h4>
+                        <p>A plataforma recebe <strong>20%</strong> da taxa de entrega</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="revenue-breakdown">
+                <h3>💵 Detalhamento da Receita</h3>
+                <table class="revenue-table">
+                    <thead>
+                        <tr>
+                            <th>Descrição</th>
+                            <th>Valor Total</th>
+                            <th>Comissão (20%)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="revenueBreakdown"></tbody>
+                </table>
+            </div>
+
+            <div class="chart-section">
+                <h3>📈 Gráfico de Lucro da Plataforma</h3>
+                <canvas id="platformRevenueChart"></canvas>
+            </div>
+        </section>
+
+    </section>
+
+    <!-- 🆕 PENDING APPROVALS SECTION -->
+    <section id="pendingApprovalsSection" class="content-section">
+        <div class="section-header">
+            <h2>⏳ Pedidos Aguardando Aprovação</h2>
+            <button class="filter-btn" onclick="loadPendingOrders()">
+                🔄 Atualizar
+            </button>
+        </div>
+        
+        <div id="pendingOrdersList" class="pending-orders-container">
+            <!-- Pedidos serão carregados aqui via JavaScript -->
+        </div>
+    </section>
+
+</main>
+
+<!-- 🆕 ELEMENTO DE ÁUDIO PARA NOTIFICAÇÕES -->
+<audio id="newOrderSound" preload="auto">
+    <source src="public/sounds/new-order.mp3" type="audio/mpeg">
+</audio>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="api.js"></script>
+<script src="admin-dashboard.js"></script>
+</body>
+</html>

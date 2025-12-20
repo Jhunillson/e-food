@@ -1,0 +1,35 @@
+{
+  "name": "efood-backend",
+  "version": "1.0.0",
+  "description": "Backend do eFood - Sistema de delivery multi-restaurante",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "efood",
+    "delivery",
+    "restaurant",
+    "nodejs",
+    "postgresql"
+  ],
+  "author": "eFood Team",
+  "license": "MIT",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.11.0",
+    "sequelize": "^6.32.1",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10",
+    "sequelize-cli": "^6.6.1"
+  }
+}

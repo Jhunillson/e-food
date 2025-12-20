@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ombbia - Entrega de Comida</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            
+            <!-- LADO ESQUERDO: Logo + Endereço -->
+            <div class="header-left">
+                <img src="public/image/ombbia1.png" alt="Ombbia" style="max-height:90px;">
+                
+                <!-- ENDEREÇO DO USUÁRIO -->
+                <div class="header-address" id="headerAddress" style="display: none; cursor: pointer;" onclick="goToAddressManager()">
+                    <span class="address-icon">📍</span>
+                    <div class="address-info">
+                        <small style="opacity: 0.8; font-size: 0.75rem;">Entregar em</small>
+                        <div id="headerAddressContent" style="font-weight: 600;">Carregando...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MENU HAMBURGER (MOBILE) -->
+            <button class="hamburger-menu" id="hamburgerBtn" onclick="toggleMobileMenu()">
+                <span class="hamburger-icon">☰</span>
+            </button>
+            
+            <!-- NAVEGAÇÃO DESKTOP -->
+            <nav class="desktop-nav">
+                <a href="#home">Início</a>
+                <a href="index.html#restaurants">Restaurantes</a>
+              
+                
+                <!-- Área de autenticação -->
+                <div class="auth-area" id="authArea">
+                    <!-- Quando não logado -->
+                    <a href="auth.html" class="btn-login" id="loginBtn">Entrar</a>
+                    
+                    <!-- Quando logado (inicialmente oculto) -->
+                    <div class="user-menu" id="userMenu" style="display: none;">
+                        <div class="user-profile">
+                            <div class="user-avatar">👤</div>
+                            <span class="user-name" id="userName">Usuário</span>
+                        </div>
+                        <div class="user-dropdown">
+                            <a href="orders.html">Meus Pedidos</a>
+                            <a href="profile.html">Meu Perfil</a>
+                            <a href="#" onclick="logout(); return false;">Sair</a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- MENU MOBILE (OVERLAY) -->
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay" onclick="closeMobileMenuOnOverlay(event)">
+        <div class="mobile-menu-content" onclick="event.stopPropagation()">
+            <button class="close-menu-btn" onclick="toggleMobileMenu()">✕</button>
+            
+            <!-- Informações do usuário (se logado) -->
+            <div class="mobile-user-info" id="mobileUserInfo" style="display: none;">
+                <div class="mobile-user-avatar">👤</div>
+                <div class="mobile-user-name" id="mobileUserName">Usuário</div>
+            </div>
+            
+            <!-- Menu de navegação mobile -->
+            <nav class="mobile-nav">
+                <a href="#home" onclick="toggleMobileMenu()">🏠 Início</a>
+                <a href="index.html#restaurants" onclick="toggleMobileMenu()">🍽️ Restaurantes</a>
+                
+                <!-- Links quando NÃO logado -->
+                <div id="mobileAuthLinks">
+                    <a href="auth.html" class="mobile-login-btn">🔐 Entrar / Registrar</a>
+                </div>
+                
+                <!-- Links quando logado -->
+                <div id="mobileUserLinks" style="display: none;">
+                    <a href="orders.html" onclick="toggleMobileMenu()">📦 Meus Pedidos</a>
+                    <a href="profile.html" onclick="toggleMobileMenu()">👤 Meu Perfil</a>
+                    <a href="profile.html#addresses" onclick="toggleMobileMenu()">📍 Meus Endereços</a>
+                    <a href="#" onclick="logout(); toggleMobileMenu(); return false;" class="mobile-logout-btn">🚪 Sair</a>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Comida deliciosa entregue na sua porta</h1>
+            <p>Peça dos melhores restaurantes da sua cidade</p>
+            <div class="search-container">
+                <input type="text" placeholder="Buscar restaurantes ou pratos...">
+                <button>Buscar</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="categories">
+        <h2 class="section-title">O que você está procurando?</h2>
+        <div class="category-grid">
+            <div class="category-card">
+                <div class="category-icon">🍕</div>
+                <div class="category-name">Pizza</div>
+            </div>
+            <div class="category-card">
+                <div class="category-icon">🍔</div>
+                <div class="category-name">Hamburger</div>
+            </div>
+            <div class="category-card">
+                <div class="category-icon">🍜</div>
+                <div class="category-name">Asiática</div>
+            </div>
+            <div class="category-card">
+                <div class="category-icon">🍰</div>
+                <div class="category-name">Sobremesas</div>
+            </div>
+            <div class="category-card">
+                <div class="category-icon">🥗</div>
+                <div class="category-name">Saudável</div>
+            </div>
+            <div class="category-card">
+                <div class="category-icon">🌮</div>
+                <div class="category-name">Mexicana</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Restaurants -->
+    <section class="restaurants" id="restaurants">
+        <h2 class="section-title">Restaurantes Populares</h2>
+        <div class="restaurant-grid">
+            <!-- Restaurantes serão carregados via JavaScript -->
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Sobre o Ombbia</h3>
+                <ul>
+                    <li><a href="#">Quem somos</a></li>
+                    <li><a href="#">Carreiras</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Imprensa</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Para Restaurantes</h3>
+                <ul>
+                    <li><a href="#">Parceiro Ombbia</a></li>
+                    <li><a href="#">Central de Ajuda</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contato</h3>
+                <ul>
+                    <li><a href="#">Suporte</a></li>
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">Termos de Uso</a></li>
+                    <li><a href="#">Privacidade</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Ombbia. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+    
+    <!-- Scripts -->
+    <script src="api.js"></script>
+    <script src="header-address.js"></script>
+    <script src="auth-check.js"></script>
+    <script src="script.js"></script>
+    
+</body>
+</html>

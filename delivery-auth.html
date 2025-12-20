@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entregador - Ombbia</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="deliver.css">
+   
+</head>
+<body>
+    <div class="delivery-auth-container">
+        <div class="delivery-auth-card">
+            <div class="delivery-logo">
+                <div class="delivery-logo-icon">🛵</div>
+                <div class="delivery-logo-text">Ombbia Delivery</div>
+                <p style="color: #999; margin-top: 0.5rem;">Parceiro Entregador</p>
+            </div>
+
+            <div class="auth-tabs">
+                <div class="auth-tab active" onclick="switchTab('login')">Login</div>
+                <div class="auth-tab" onclick="switchTab('register')">Cadastro</div>
+            </div>
+
+            <!-- Formulário de Login -->
+            <form id="loginForm" class="auth-form active" onsubmit="handleLogin(event)">
+                <div class="input-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" placeholder="seu@email.com" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="loginPassword">Senha</label>
+                    <input type="password" id="loginPassword" placeholder="Sua senha" required>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="rememberMe">
+                    <label for="rememberMe">Lembrar-me</label>
+                </div>
+
+                <button type="submit" class="btn-submit">Entrar</button>
+
+                <div class="form-footer">
+                    Não tem conta? <a href="#" onclick="switchTab('register'); return false;" style="color: #667eea; font-weight: 600;">Cadastre-se</a>
+                </div>
+            </form>
+
+            <!-- Formulário de Cadastro -->
+            <form id="registerForm" class="auth-form" onsubmit="handleRegister(event)">
+                <div class="input-group">
+                    <label for="registerName">Nome Completo</label>
+                    <input type="text" id="registerName" placeholder="João Silva" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" placeholder="seu@email.com" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="registerPhone">Telefone</label>
+                    <input type="tel" id="registerPhone" placeholder="9XX XXX XXX" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="registerPassword">Senha</label>
+                    <input type="password" id="registerPassword" placeholder="Mínimo 6 caracteres" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="registerConfirmPassword">Confirmar Senha</label>
+                    <input type="password" id="registerConfirmPassword" placeholder="Digite a senha novamente" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Tipo de Veículo</label>
+                    <div class="vehicle-options">
+                        <label class="vehicle-option">
+                            <input type="radio" name="vehicle" value="motorcycle" required>
+                            <div class="vehicle-icon">🏍️</div>
+                            <div class="vehicle-name">Moto</div>
+                        </label>
+                        <label class="vehicle-option">
+                            <input type="radio" name="vehicle" value="bicycle">
+                            <div class="vehicle-icon">🚴</div>
+                            <div class="vehicle-name">Bicicleta</div>
+                        </label>
+                        <label class="vehicle-option">
+                            <input type="radio" name="vehicle" value="car">
+                            <div class="vehicle-icon">🚗</div>
+                            <div class="vehicle-name">Carro</div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="vehiclePlate">Placa do Veículo (Opcional)</label>
+                    <input type="text" id="vehiclePlate" placeholder="LD-12-34-AB">
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="agreeTerms" required>
+                    <label for="agreeTerms">Aceito os termos e condições</label>
+                </div>
+
+                <button type="submit" class="btn-submit">Cadastrar</button>
+
+                <div class="form-footer">
+                    Já tem conta? <a href="#" onclick="switchTab('login'); return false;" style="color: #667eea; font-weight: 600;">Faça login</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="api.js"></script>
+    <script src="delivery-auth.js"></script>
+</body>
+</html>

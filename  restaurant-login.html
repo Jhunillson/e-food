@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurante - Login - eFood</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="auth.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="" onclick="window.location.href='index.html'" style="cursor: pointer;"><img src="public/image/ombbia1.png" alt="Ombbia" style="max-height:90px;"></div>
+            <nav>
+                <a href="index.html">Início</a>
+                <a href="auth.html">Área do Cliente</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Auth Section -->
+    <section class="auth-section">
+        <div class="auth-container">
+            <!-- Auth Box -->
+            <div class="auth-box">
+                <!-- Tabs -->
+                <div class="auth-tabs">
+                    <button class="auth-tab active" onclick="switchTabRestaurant('login')">Entrar</button>
+                    <button class="auth-tab" onclick="switchTabRestaurant('register')">Cadastrar Restaurante</button>
+                </div>
+
+                <!-- Login Form -->
+                <div class="auth-form" id="loginFormRestaurant">
+                    <h2>🍽️ Área do Restaurante</h2>
+                    <p class="auth-subtitle">Entre para gerenciar seu restaurante</p>
+
+                    <form onsubmit="handleRestaurantLogin(event)">
+                        <div class="form-group">
+                            <label for="loginEmailRest">E-mail</label>
+                            <input type="email" id="loginEmailRest" placeholder="restaurante@email.com" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="loginPasswordRest">Senha</label>
+                            <input type="password" id="loginPasswordRest" placeholder="••••••••" required>
+                        </div>
+
+                        <div class="form-options">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="rememberMeRest">
+                                <span>Lembrar de mim</span>
+                            </label>
+                            <a href="#" class="forgot-password">Esqueceu a senha?</a>
+                        </div>
+
+                        <button type="submit" class="btn-submit">Entrar no Painel</button>
+                    </form>
+                </div>
+
+                <!-- Register Form -->
+                <div class="auth-form hidden" id="registerFormRestaurant">
+                    <h2>🎉 Cadastrar Restaurante</h2>
+                    <p class="auth-subtitle">Junte-se à plataforma eFood</p>
+
+                    <form onsubmit="handleRestaurantRegister(event)">
+                        <div class="form-group">
+                            <label for="registerRestName">Nome do Restaurante</label>
+                            <input type="text" id="registerRestName" placeholder="Ex: Pizza Palace" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="registerRestImage">Imagem do Restaurante *</label>
+                            <input type="file" id="registerRestImage" accept="image/*" onchange="previewRegisterImage(event)" required>
+                            <small style="color: #666; font-size: 0.85rem;">Formatos aceitos: JPG, PNG (máx. 5MB)</small>
+                            <div id="registerImagePreview" style="margin-top: 10px;"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="registerRestIcon">Ícone do Restaurante (Emoji - opcional)</label>
+                            <input type="text" id="registerRestIcon" placeholder="🍕" maxlength="2">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="registerRestCategory">Categoria</label>
+                            <select id="registerRestCategory" required>
+                                <option value="">Selecione a categoria</option>
+                                <option value="Italiana">Italiana</option>
+                                <option value="Americana">Americana</option>
+                                <option value="Japonesa">Japonesa</option>
+                                <option value="Mexicana">Mexicana</option>
+                                <option value="Árabe">Árabe</option>
+                                <option value="Portuguesa">Portuguesa</option>
+                                <option value="Chinesa">Chinesa</option>
+                                <option value="Fast Food">Fast Food</option>
+                                <option value="Saudável">Saudável</option>
+                                <option value="Padaria">Padaria</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="registerRestCuisine">Descrição da Cozinha</label>
+                            <input type="text" id="registerRestCuisine" placeholder="Ex: Pizza, Massas, Lasanha" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="registerRestEmail">E-mail do Restaurante</label>
+                            <input type="email" id="registerRestEmail" placeholder="restaurante@email.com" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="registerRestPhone">Telefone</label>
+                            <input type="tel" id="registerRestPhone" placeholder="9XX XXX XXX" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="registerRestAddress">Endereço</label>
+                            <textarea id="registerRestAddress" rows="3" placeholder="Endereço completo do restaurante" required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="registerRestPassword">Senha</label>
+                            <input type="password" id="registerRestPassword" placeholder="••••••••" required minlength="6">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="registerRestConfirmPassword">Confirmar Senha</label>
+                            <input type="password" id="registerRestConfirmPassword" placeholder="••••••••" required minlength="6">
+                        </div>
+
+                        <div class="form-options">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="agreeTermsRest" required>
+                                <span>Aceito os <a href="#">termos de uso</a> para restaurantes</span>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn-submit">Cadastrar Restaurante</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Info Section -->
+            <div class="auth-info">
+                <div class="info-content">
+                    <div class="info-icon">🍽️</div>
+                    <h2>Faça parte da maior plataforma de delivery</h2>
+                    <ul class="info-list">
+                        <li>📈 Aumente suas vendas</li>
+                        <li>👥 Alcance mais clientes</li>
+                        <li>📊 Painel de controle completo</li>
+                        <li>💰 Receba pagamentos online</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script src="api.js"></script>
+    <script src="restaurant-login.js"></script>
+</body>
+</html>

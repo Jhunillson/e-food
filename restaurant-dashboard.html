@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="pt-AO">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Restaurante</title>
+    <link rel="stylesheet" href="restaurant-dashboard.css">
+    <script>
+        const socketHost =
+            window.location.hostname === "localhost" ||
+            window.location.hostname === "127.0.0.1"
+                ? "http://localhost:3000"
+                : `http://${window.location.hostname}:3000`;
+    
+        document.write(
+            `<script src="${socketHost}/socket.io/socket.io.js"><\/script>`
+        );
+    </script>
+</head>
+<body>
+   
+    <div class="mobile-header">
+        <div class="burger" onclick="toggleMenu()">☰</div>
+        <div class="mobile-title">Dashboard</div>
+    </div>
+      
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="restaurant-info">
+                <div class="restaurant-avatar" id="restaurantAvatar">🍽️</div>
+                <div class="restaurant-details">
+                    <h3 id="restaurantName">Restaurante</h3>
+                    <p id="restaurantCategory">Categoria</p>
+                </div>
+            </div>
+        </div>
+        
+        <nav class="sidebar-menu">
+            <a href="#" class="menu-item active" onclick="showSection('overview')">
+                <span class="menu-icon">📊</span>
+                <span>Visão Geral</span>
+            </a>
+            <a href="#" class="menu-item" onclick="showSection('orders')">
+                <span class="menu-icon">📋</span>
+                <span>Pedidos</span>
+            </a>
+            <a href="#" class="menu-item" onclick="showSection('menu')">
+                <span class="menu-icon">🍽️</span>
+                <span>Cardápio</span>
+            </a>
+            <a href="#" class="menu-item" onclick="showSection('reports')">
+                <span class="menu-icon">💰</span>
+                <span>Relatório de Lucros</span>
+            </a>
+            <a href="#" class="menu-item" onclick="showSection('settings')">
+                <span class="menu-icon">⚙️</span>
+                <span>Configurações</span>
+            </a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <button onclick="logout()" class="btn-logout-sidebar">
+                <span>🚪</span> Sair
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        
+        <!-- SEÇÃO: VISÃO GERAL -->
+        <section id="overviewSection" class="content-section active">
+            <h1 class="page-title">📊 Visão Geral</h1>
+            
+            <!-- Estatísticas -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">📦</div>
+                    <div class="stat-info">
+                        <div class="stat-label">Pedidos Hoje</div>
+                        <div class="stat-value" id="todayOrders">0</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-info">
+                        <div class="stat-label">Receita Hoje</div>
+                        <div class="stat-value" id="todayRevenue">Kz 0,00</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">⭐</div>
+                    <div class="stat-info">
+                        <div class="stat-label">Avaliação</div>
+                        <div class="stat-value" id="rating">0.0</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">🍽️</div>
+                    <div class="stat-info">
+                        <div class="stat-label">Pratos no Cardápio</div>
+                        <div class="stat-value" id="menuCount">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção de Avaliações -->
+            <div class="ratings-section">
+                <div class="rating-summary-card">
+                    <h3>⭐ Avaliação do Restaurante</h3>
+                    <div class="rating-summary">
+                        <div class="rating-number" id="restaurantRatingNumber">0.0</div>
+                        <div class="rating-stars" id="restaurantRatingStars">☆☆☆☆☆</div>
+                        <div class="rating-count" id="restaurantRatingCount">0 avaliações</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Avaliações dos Clientes -->
+            <div class="feedbacks-section">
+                <h3>💬 Avaliações dos Clientes</h3>
+                <div id="feedbacksList" class="feedbacks-list">
+                    <!-- As avaliações serão carregadas aqui via JavaScript -->
+                </div>
+            </div>
+
+            <!-- Pedidos Recentes -->
+            <div class="recent-orders-section">
+                <h3>📋 Pedidos Recentes</h3>
+                <div id="recentOrdersList"></div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO: PEDIDOS -->
+        <section id="ordersSection" class="content-section">
+            <h1 class="page-title">📋 Gerenciar Pedidos</h1>
+            
+            <!-- Filtros -->
+            <div class="orders-filters">
+                <button class="filter-btn active" data-filter="all" onclick="filterRestaurantOrders('all')">Todos</button>
+                <button class="filter-btn" data-filter="pending" onclick="filterRestaurantOrders('pending')">🕐 Pendente</button>
+                <button class="filter-btn" data-filter="preparing" onclick="filterRestaurantOrders('preparing')">👨‍🍳 Preparando</button>
+                <button class="filter-btn" data-filter="delivering" onclick="filterRestaurantOrders('delivering')">🚚 Entregando</button>
+                <button class="filter-btn" data-filter="completed" onclick="filterRestaurantOrders('completed')">✅ Concluído</button>
+                <button class="filter-btn" data-filter="cancelled" onclick="filterRestaurantOrders('cancelled')">❌ Cancelado</button>
+            </div>
+
+            <!-- Lista de Pedidos -->
+            <div id="restaurantOrdersList" class="orders-list">
+                <!-- Pedidos serão carregados aqui -->
+            </div>
+        </section>
+
+        <!-- SEÇÃO: CARDÁPIO -->
+        <section id="menuSection" class="content-section">
+            <div class="section-header">
+                <h1 class="page-title">🍽️ Gerenciar Cardápio</h1>
+                <button onclick="showAddMenuItemModal()" class="btn-add">
+                    ➕ Adicionar Prato
+                </button>
+            </div>
+            
+            <div id="restaurantMenuGrid" class="menu-grid">
+                <!-- Pratos serão carregados aqui -->
+            </div>
+        </section>
+
+        <!-- SEÇÃO: RELATÓRIO DE LUCROS -->
+        <section id="reportsSection" class="content-section">
+            <div class="section-header">
+                <h1 class="page-title">💰 Relatório de Lucros</h1>
+                <button onclick="loadProfitReport()" class="btn-add">
+                    🔄 Atualizar
+                </button>
+            </div>
+            
+            <div id="profitReportContent">
+                <!-- Conteúdo será gerado dinamicamente -->
+                <div class="empty-message" style="text-align: center; padding: 60px 20px;">
+                    <div style="font-size: 4rem; margin-bottom: 20px;">📊</div>
+                    <h3>Carregando relatório...</h3>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO: CONFIGURAÇÕES -->
+        <section id="settingsSection" class="content-section">
+            <h1 class="page-title">⚙️ Configurações do Restaurante</h1>
+            
+            <form onsubmit="saveSettings(event)" class="settings-form">
+                <div class="form-group">
+                    <label>Nome do Restaurante</label>
+                    <input type="text" id="settingsName" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Imagem do Restaurante *</label>
+                    <input type="file" id="settingsImage" accept="image/*" onchange="previewRestaurantImage(event)">
+                    <small style="color: #666; font-size: 0.85rem;">Formatos aceitos: JPG, PNG (máx. 5MB)</small>
+                    <div id="restaurantImagePreview" style="margin-top: 10px;"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Ícone (Emoji - opcional)</label>
+                    <input type="text" id="settingsIcon">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Categoria</label>
+                        <select id="settingsCategory" required>
+                            <option value="Restaurante">Restaurante</option>
+                            <option value="Lanchonete">Lanchonete</option>
+                            <option value="Pizzaria">Pizzaria</option>
+                            <option value="Hamburgueria">Hamburgueria</option>
+                            <option value="Sushi">Sushi</option>
+                            <option value="Pastelaria">Pastelaria</option>
+                            <option value="Cafeteria">Cafeteria</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Tipo de Cozinha</label>
+                        <input type="text" id="settingsCuisine" placeholder="Ex: Italiana, Angolana, Brasileira">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Tempo Mínimo (min)</label>
+                        <input type="number" id="settingsMinTime" min="10" max="120" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Tempo Máximo (min)</label>
+                        <input type="number" id="settingsMaxTime" min="10" max="120" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Telefone</label>
+                    <input type="tel" id="settingsPhone" placeholder="+244 900 000 000">
+                </div>
+
+                <div class="form-group">
+                    <label>Endereço</label>
+                    <textarea id="settingsAddress" rows="3" placeholder="Endereço completo do restaurante"></textarea>
+                </div>
+
+                <button type="submit" class="btn-save">
+                    💾 Salvar Configurações
+                </button>
+            </form>
+        </section>
+
+    </main>
+
+    <!-- Modal: Adicionar Prato -->
+    <div id="addMenuModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>➕ Adicionar Novo Prato</h2>
+                <button class="close-btn" onclick="closeAddMenuModal()">&times;</button>
+            </div>
+            <form id="addMenuForm" onsubmit="addMenuItem(event)" class="modal-body">
+                <div class="form-group">
+                    <label>Nome do Prato</label>
+                    <input type="text" id="dishName" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Descrição</label>
+                    <textarea id="dishDescription" rows="3" required></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Preço (Kz)</label>
+                        <input type="number" id="dishPrice" step="0.01" min="0" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Categoria</label>
+                        <select id="dishCategory" required>
+                            <option value="Entrada">Entrada</option>
+                            <option value="Prato Principal">Prato Principal</option>
+                            <option value="Sobremesa">Sobremesa</option>
+                            <option value="Bebida">Bebida</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Imagem do Prato *</label>
+                    <input type="file" id="dishImage" accept="image/*" onchange="previewDishImage(event)" required>
+                    <small style="color: #666; font-size: 0.85rem;">Formatos aceitos: JPG, PNG (máx. 5MB)</small>
+                    <div id="dishImagePreview" style="margin-top: 10px;"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Ícone (Emoji - opcional)</label>
+                    <input type="text" id="dishIcon" placeholder="🍕">
+                </div>
+
+                <button type="submit" class="btn-save">
+                    ➕ Adicionar Prato
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <audio id="newOrderSound">
+        <source src="public/sounds/new-order.mp3" type="audio/mpeg">
+    </audio>
+    
+    <!-- Scripts -->
+    <script src="api.js"></script>
+    <script src="restaurant-dashboard.js"></script>
+</body>
+</html>

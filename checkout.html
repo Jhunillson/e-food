@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finalizar Pedido - eFood</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="checkout.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="" onclick="window.location.href='index.html'" style="cursor: pointer;"><img src="public/image/ombbia1.png" alt="Ombbia" style="max-height:90px;"></div>
+            <nav>
+                <a href="index.html">Início</a>
+                <a href="index.html#restaurants">Restaurantes</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Checkout Section -->
+    <section class="checkout-section">
+        <div class="checkout-container">
+            <!-- Progresso (APENAS 2 ETAPAS) -->
+           <!-- Progresso (APENAS 2 ETAPAS - LIMPO) -->
+<div class="checkout-progress">
+    <div class="progress-step active">
+        <div class="step-number">1</div>
+        <div class="step-label">Pagamento</div>
+    </div>
+    <div class="progress-line"></div>
+    <div class="progress-step">
+        <div class="step-number">2</div>
+        <div class="step-label">Confirmação</div>
+    </div>
+</div>
+
+<!-- Banner do Endereço Atual -->
+<div class="address-info-banner">
+    <div class="address-current">
+        <div class="address-current-label">📍 Entregar em:</div>
+        <div class="address-current-text" id="currentAddressText">
+            Selecione um endereço de entrega
+        </div>
+    </div>
+    <button onclick="openAddressModal()" class="btn-change-address">
+        Alterar Endereço
+    </button>
+</div>
+
+<!-- Modal do Seletor de Endereço -->
+<div class="address-selector-modal" id="addressSelectorModal">
+    <div class="address-selector-content">
+        <div class="address-selector-header">
+            <h3>📍 Escolher Endereço</h3>
+            <button onclick="closeAddressModal()" class="btn-close-modal">×</button>
+        </div>
+        
+        <div class="address-selector-body">
+            <label for="addressSelect">Selecione o endereço de entrega:</label>
+            <select id="addressSelect">
+                <option value="">Carregando endereços...</option>
+            </select>
+        </div>
+        
+        <div class="address-selector-footer">
+            <button onclick="confirmAddress()" class="btn-confirm-address">
+                Confirmar
+            </button>
+            <button onclick="goToAddressManager()" class="btn-manage-address">
+                Gerir Endereços
+            </button>
+        </div>
+    </div>
+</div>
+
+            <div class="checkout-content">
+                <!-- Formulário -->
+                <div class="checkout-form">
+                    <!-- STEP 1 DO HTML REMOVIDO COMPLETAMENTE -->
+
+                    <!-- Etapa 1: Pagamento (ERA ETAPA 2) -->
+                    <div class="checkout-step" id="step1">
+                        <h2>💳 Forma de Pagamento</h2>
+                        
+                        <div class="payment-methods">
+                            <div class="payment-option" onclick="selectPayment('multicaixa')">
+                                <input type="radio" name="payment" id="multicaixa" value="multicaixa">
+                                <label for="multicaixa">
+                                    <span class="payment-icon">💳</span>
+                                    <span>Multicaixa Express</span>
+                                </label>
+                            </div>
+
+                            <div class="payment-option" onclick="selectPayment('card')">
+                                <input type="radio" name="payment" id="card" value="card">
+                                <label for="card">
+                                    <span class="payment-icon">💳</span>
+                                    <span>Cartão Visa/Mastercard</span>
+                                </label>
+                            </div>
+
+                            <div class="payment-option" onclick="selectPayment('cash')">
+                                <input type="radio" name="payment" id="cash" value="cash">
+                                <label for="cash">
+                                    <span class="payment-icon">💵</span>
+                                    <span>Dinheiro (Kwanzas)</span>
+                                </label>
+                            </div>
+
+                            <div class="payment-option" onclick="selectPayment('delivery')">
+                                <input type="radio" name="payment" id="delivery" value="delivery">
+                                <label for="delivery">
+                                    <span class="payment-icon">🚚</span>
+                                    <span>Pagamento na Entrega</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Formulário de cartão -->
+                        <div class="card-form hidden" id="cardForm">
+                            <div class="form-group">
+                                <label for="cardNumber">Número do Cartão</label>
+                                <input type="text" id="cardNumber" placeholder="0000 0000 0000 0000" maxlength="19">
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="cardName">Nome no Cartão</label>
+                                    <input type="text" id="cardName" placeholder="Nome completo">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="cardExpiry">Validade</label>
+                                    <input type="text" id="cardExpiry" placeholder="MM/AA" maxlength="5">
+                                </div>
+                                <div class="form-group">
+                                    <label for="cardCVV">CVV</label>
+                                    <input type="text" id="cardCVV" placeholder="123" maxlength="3">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Troco -->
+                        <div class="money-form hidden" id="moneyForm">
+                            <div class="form-group">
+                                <label for="changeFor">Troco para quanto?</label>
+                                <input type="text" id="changeFor" placeholder="Kz 0,00">
+                            </div>
+                        </div>
+
+                        <div class="checkout-buttons">
+                            <button class="btn-next" onclick="goToStep(2)">Continuar →</button>
+                        </div>
+                    </div>
+
+                    <!-- Etapa 2: Confirmação (ERA ETAPA 3) -->
+                    <div class="checkout-step hidden" id="step2">
+                        <h2>✅ Confirmar Pedido</h2>
+                        
+                        <div class="confirmation-section">
+                            <h3>📍 Endereço de Entrega</h3>
+                            <div class="confirmation-info" id="confirmAddress">
+                                <!-- Preenchido via JS -->
+                            </div>
+                        </div>
+
+                        <div class="confirmation-section">
+                            <h3>💳 Forma de Pagamento</h3>
+                            <div class="confirmation-info" id="confirmPayment">
+                                <!-- Preenchido via JS -->
+                            </div>
+                        </div>
+
+                        <div class="confirmation-section">
+                            <h3>🍕 Itens do Pedido</h3>
+                            <div class="confirmation-items" id="confirmItems">
+                                <!-- Preenchido via JS -->
+                            </div>
+                        </div>
+
+                        <div class="checkout-buttons">
+                            <button class="btn-back" onclick="goToStep(1)">← Voltar</button>
+                            <button class="btn-finish" onclick="finishOrder()">Finalizar Pedido 🎉</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resumo do Pedido (Sidebar) -->
+                <div class="order-summary">
+                    <h3>📋 Resumo do Pedido</h3>
+                    
+                    <div class="summary-restaurant" id="summaryRestaurant">
+                        <div class="restaurant-icon">🍕</div>
+                        <div>
+                            <div class="restaurant-name">Pizza Palace</div>
+                            <div class="restaurant-time">30-40 min</div>
+                        </div>
+                    </div>
+
+                    <div class="summary-items" id="summaryItems">
+                        <!-- Preenchido via JS -->
+                    </div>
+
+                    <div class="summary-totals">
+                        <div class="summary-row">
+                            <span>Subtotal</span>
+                            <span id="summarySubtotal">Kz 0,00</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Taxa de entrega</span>
+                            <span class="summary-delivery-fee" id="summaryDeliveryFee">Kz 500,00</span>
+                        </div>
+                        <div class="summary-row summary-total">
+                            <span><strong>Total</strong></span>
+                            <span id="summaryTotal"><strong>Kz 0,00</strong></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script src="api.js"></script>
+    <script src="checkout.js"></script>
+</body>
+</html>

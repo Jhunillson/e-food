@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Pedidos - eFood</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="orders.css">
+    <link rel="stylesheet" href="rating-modal.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="" onclick="window.location.href='index.html'" style="cursor: pointer;"><img src="public/image/ombbia1.png" alt="Ombbia" style="max-height:90px;"></div>
+            <nav>
+                <a href="index.html">Início</a>
+                <a href="index.html#restaurants">Restaurantes</a>
+                <a href="orders.html" class="active">Meus Pedidos</a>
+                <a href="profile.html">Perfil</a>
+                <a href="#" class="btn-login" id="userNameBtn">Usuário</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Orders Section -->
+    <section class="orders-section">
+        <div class="orders-container">
+            <div class="orders-header">
+                <h1>📦 Meus Pedidos</h1>
+                <p>Acompanhe todos os seus pedidos</p>
+            </div>
+
+            <!-- Filtros -->
+            <div class="orders-filters">
+                <button class="filter-btn active" onclick="filterOrders('all')">
+                    Todos
+                </button>
+                <button class="filter-btn" onclick="filterOrders('pending')">
+                    🕐 Em Andamento
+                </button>
+                <button class="filter-btn" onclick="filterOrders('completed')">
+                    ✅ Concluídos
+                </button>
+                <button class="filter-btn" onclick="filterOrders('cancelled')">
+                    ❌ Cancelados
+                </button>
+            </div>
+
+            <!-- Lista de Pedidos -->
+            <div class="orders-list" id="ordersList">
+                <!-- Pedidos serão inseridos aqui via JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal de Detalhes do Pedido -->
+    <div class="modal" id="orderModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Detalhes do Pedido</h2>
+                <button class="modal-close" onclick="closeModal()">✕</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Conteúdo será inserido via JS -->
+            </div>
+        </div>
+    </div>
+<!-- Modal de Avaliação -->
+<div id="ratingModal" class="modal-rating" style="display: none;">
+    <div class="modal-rating-content">
+        <div class="rating-header">
+            <h2>⭐ Avalie seu pedido</h2>
+            <button class="close-rating" onclick="closeRatingModal()">&times;</button>
+        </div>
+        
+        <div class="rating-body">
+            <div class="restaurant-info-rating">
+                <div class="restaurant-icon-rating" id="ratingRestaurantIcon">🍕</div>
+                <h3 id="ratingRestaurantName">Restaurante</h3>
+            </div>
+            
+            <p class="rating-question">Como foi sua experiência?</p>
+            
+            <div class="stars-container">
+                <span class="star" data-rating="1" onclick="selectRating(1)">⭐</span>
+                <span class="star" data-rating="2" onclick="selectRating(2)">⭐</span>
+                <span class="star" data-rating="3" onclick="selectRating(3)">⭐</span>
+                <span class="star" data-rating="4" onclick="selectRating(4)">⭐</span>
+                <span class="star" data-rating="5" onclick="selectRating(5)">⭐</span>
+            </div>
+            
+            <div class="rating-text" id="ratingText">Selecione as estrelas</div>
+            
+            <textarea 
+                id="ratingComment" 
+                placeholder="Deixe um comentário (opcional)"
+                rows="4"
+            ></textarea>
+            
+            <button class="btn-submit-rating" onclick="submitRating()">
+                Enviar Avaliação
+            </button>
+        </div>
+    </div>
+</div>
+
+    <script src="api.js"></script>
+    <script src="orders.js"></script>
+</body>
+</html>

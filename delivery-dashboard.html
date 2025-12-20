@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Entregador - Ombbia</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="delivery-dashboard.css">
+</head>
+<body>
+
+    <div id="soundUnlockOverlay" style="
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 99999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+">
+    <button id="unlockSoundBtn" style="
+        background: #2980b9;
+        color: white;
+        font-size: 18px;
+        padding: 20px 30px;
+        border-radius: 14px;
+        border: none;
+        cursor: pointer;
+    ">
+        🔊 Ativar alertas de pedidos
+        
+    </button>
+</div>
+
+    <!-- Header -->
+    <header class="delivery-header">
+        <div class="delivery-brand">
+            <div class="delivery-icon">🛵</div>
+            <div class="delivery-info">
+                <h1 id="deliveryName">Entregador</h1>
+                <p id="deliveryVehicle">Veículo</p>
+            </div>
+        </div>
+
+        <div class="delivery-actions">
+            <!-- Toggle Online/Offline -->
+            <div class="online-toggle" onclick="toggleOnlineStatus()">
+                <div class="toggle-switch" id="toggleSwitch">
+                    <div class="toggle-slider"></div>
+                </div>
+                <span class="online-status-text" id="statusText">Offline</span>
+            </div>
+
+            <!-- Notificações -->
+            <div class="notification-bell" onclick="showSection('available')">
+                🔔
+                <span class="notification-badge" id="notificationCount" style="display: none;">0</span>
+            </div>
+
+            <!-- Logout -->
+            <button class="logout-btn" onclick="logout()">Sair</button>
+        </div>
+    </header>
+
+    <!-- Dashboard Container -->
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="stats-card">
+                <h3 style="margin-bottom: 1rem;">📊 Estatísticas</h3>
+                <div class="stat-item">
+                    <span class="stat-label">Pontuação:</span>
+                    <span class="stat-value" id="deliveryScore">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Entregas Totais:</span>
+                    <span class="stat-value" id="totalDeliveries">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Hoje:</span>
+                    <span class="stat-value" id="todayDeliveries">0</span>
+                </div>
+            </div>
+
+            <div class="menu-section">
+                <div class="menu-item active" onclick="showSection('available')">
+                    <span class="menu-icon">📦</span>
+                    <span>Pedidos Disponíveis</span>
+                </div>
+                <div class="menu-item" onclick="showSection('active')">
+                    <span class="menu-icon">🚚</span>
+                    <span>Entregas Ativas</span>
+                </div>
+                <div class="menu-item" onclick="showSection('history')">
+                    <span class="menu-icon">📜</span>
+                    <span>Histórico</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Pedidos Disponíveis -->
+            <section id="availableSection" class="content-section active">
+                <h2 style="margin-bottom: 1.5rem;">📦 Pedidos Disponíveis</h2>
+                <div class="available-orders-grid" id="availableOrdersList">
+                    <p class="empty-message">Nenhum pedido disponível no momento.</p>
+                </div>
+            </section>
+
+            <!-- Entregas Ativas (com mapa) -->
+            <section id="activeSection" class="content-section">
+                <h2 style="margin-bottom: 1.5rem;">🚚 Entrega Ativa</h2>
+                <div id="activeDeliveryContent">
+                    <p class="empty-message">Você não tem entregas ativas.</p>
+                </div>
+            </section>
+
+            <!-- Histórico -->
+            <section id="historySection" class="content-section">
+                <h2 style="margin-bottom: 1.5rem;">📜 Histórico de Entregas</h2>
+                <div id="historyList">
+                    <p class="empty-message">Nenhuma entrega no histórico.</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <audio id="newOrderSound" src="public/sounds/new-order.mp3" preload="auto"></audio>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="api.js"></script>
+    <script src="delivery-dashboard.js"></script>
+</body>
+</html>
