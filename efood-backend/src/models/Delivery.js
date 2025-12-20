@@ -1,64 +1,64 @@
-const { DataTypes } = require('sequelize');
-const { sequelize } = require('../config/database');
-
-const Delivery = sequelize.define('Delivery', {
-    id: {
+module.exports = (sequelize, DataTypes) => {
+    const Delivery = sequelize.define('Delivery', {
+      id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
-    },
-    name: {
+      },
+      name: {
         type: DataTypes.STRING,
         allowNull: false
-    },
-    email: {
+      },
+      email: {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true
-    },
-    phone: {
+      },
+      phone: {
         type: DataTypes.STRING,
         allowNull: false
-    },
-    password: {
+      },
+      password: {
         type: DataTypes.STRING,
         allowNull: false
-    },
-    vehicle: {
+      },
+      vehicle: {
         type: DataTypes.ENUM('motorcycle', 'bicycle', 'car'),
         allowNull: false
-    },
-    vehiclePlate: {
+      },
+      vehiclePlate: {
         type: DataTypes.STRING,
         allowNull: true
-    },
-    avatar: {
+      },
+      avatar: {
         type: DataTypes.STRING,
         defaultValue: '🛵'
-    },
-    isOnline: {
+      },
+      isOnline: {
         type: DataTypes.BOOLEAN,
         defaultValue: false
-    },
-    score: {
+      },
+      score: {
         type: DataTypes.INTEGER,
         defaultValue: 0
-    },
-    totalDeliveries: {
+      },
+      totalDeliveries: {
         type: DataTypes.INTEGER,
         defaultValue: 0
-    },
-    currentLocation: {
-        type: DataTypes.JSONB, // {lat, lng}
+      },
+      currentLocation: {
+        type: DataTypes.JSONB, // { lat, lng }
         allowNull: true
-    },
-    isActive: {
+      },
+      isActive: {
         type: DataTypes.BOOLEAN,
         defaultValue: false
-    }
-}, {
-    tableName: 'deliveries',
-    timestamps: true
-});
-
-module.exports = Delivery;
+      }
+    }, {
+      tableName: 'deliveries',
+      timestamps: true
+    });
+  
+    return Delivery;
+  };
+  

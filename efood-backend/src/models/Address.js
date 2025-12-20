@@ -1,72 +1,55 @@
-const { DataTypes } = require('sequelize');
-const { sequelize } = require('../config/database');
-const User = require('./User');
-
-const Address = sequelize.define('Address', {
-    id: {
+module.exports = (sequelize, DataTypes) => {
+    const Address = sequelize.define('Address', {
+      id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
-    },
-    userId: {
+      },
+      userId: {
         type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: 'users',
-            key: 'id'
-        },
-        onDelete: 'CASCADE'
-    },
-    label: {
+        allowNull: false
+      },
+      label: {
         type: DataTypes.STRING(50),
         allowNull: false // Ex: Casa, Trabalho
-    },
-    province: {
+      },
+      province: {
         type: DataTypes.STRING(50),
         allowNull: false
-    },
-    municipality: {
+      },
+      municipality: {
         type: DataTypes.STRING(50),
         allowNull: false
-    },
-    street: {
+      },
+      street: {
         type: DataTypes.STRING(100),
         allowNull: false
-    },
-    number: {
+      },
+      number: {
         type: DataTypes.STRING(20),
         allowNull: false
-    },
-    complement: {
+      },
+      complement: {
         type: DataTypes.STRING(100),
         allowNull: true
-    },
-    neighborhood: {
+      },
+      neighborhood: {
         type: DataTypes.STRING(50),
         allowNull: false
-    },
-    reference: {
+      },
+      reference: {
         type: DataTypes.STRING(200),
         allowNull: false
-    },
-    isDefault: {
+      },
+      isDefault: {
         type: DataTypes.BOOLEAN,
         defaultValue: false
-    }
-}, {
-    tableName: 'addresses',
-    timestamps: true
-});
-
-// Relacionamento: Um usuário tem muitos endereços
-//User.hasMany(Address, { 
- //   foreignKey: 'userId',
-   // as: 'addresses'
-//});
-
-//Address.belongsTo(User, { 
-   // foreignKey: 'userId',
-    //as: 'user'
-//});
-
-module.exports = Address;
+      }
+    }, {
+      tableName: 'addresses',
+      timestamps: true
+    });
+  
+    return Address;
+  };
+  

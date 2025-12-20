@@ -1,16 +1,19 @@
-const { Sequelize } = require('sequelize');
+const { Sequelize, DataTypes } = require('sequelize');
 const config = require('../config/database');
 
 const env = process.env.NODE_ENV || 'development';
 const sequelize = new Sequelize(config[env]);
 
-const User = require('./User');
-const Restaurant = require('./Restaurant');
-const MenuItem = require('./MenuItem');
-const Order = require('./Order');
-const Address = require('./Address');
-const Delivery = require('./Delivery');
-const Admin = require('./Admin'); // ✅ Adicionado aqui
+// ============================
+// INICIALIZAR MODELS
+// ============================
+const User = require('./User')(sequelize, DataTypes);
+const Restaurant = require('./Restaurant')(sequelize, DataTypes);
+const MenuItem = require('./MenuItem')(sequelize, DataTypes);
+const Order = require('./Order')(sequelize, DataTypes);
+const Address = require('./Address')(sequelize, DataTypes);
+const Delivery = require('./Delivery')(sequelize, DataTypes);
+const Admin = require('./Admin')(sequelize, DataTypes);
 
 // ============================
 // ASSOCIAÇÕES ENTRE MODELS
@@ -36,38 +39,16 @@ Order.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 Delivery.hasMany(Order, { foreignKey: 'deliveryId', as: 'deliveryOrders' });
 Order.belongsTo(Delivery, { foreignKey: 'deliveryId', as: 'delivery' });
 
-
-// Testar conexão com banco
-const testConnection = async () => {
-  try {
-    await sequelize.authenticate();
-    console.log('✅ Conexão com banco de dados estabelecida com sucesso!');
-  } catch (error) {
-    console.error('❌ Erro ao conectar com banco de dados:', error);
-    throw error;
-  }
-};
-
-// Sincronizar todos os models com o banco
-const syncDatabase = async () => {
-  try {
-    //await sequelize.sync({ alter: true }); // Atualiza tabelas existentes
-    console.log('✅ Tabelas do banco sincronizadas!');
-  } catch (error) {
-    console.error('❌ Erro ao sincronizar tabelas:', error);
-    throw error;
-  }
-};
-
+// ============================
+// EXPORTS
+// ============================
 module.exports = {
   sequelize,
-  testConnection,
-  syncDatabase,
   User,
   Restaurant,
   MenuItem,
   Order,
   Address,
   Delivery,
-  Admin, // ✅ agora está exportado corretamente
+  Admin
 };
