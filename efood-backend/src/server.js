@@ -3,7 +3,8 @@ const cors = require('cors');
 require('dotenv').config();
 const http = require('http');
 const { Server } = require('socket.io');
-const { testConnection, syncDatabase } = require('./models');
+const { sequelize } = require('./models');
+
 
 // Importar rotas
 const authRoutes = require('./routes/authRoutes');
@@ -87,20 +88,18 @@ app.use((err, req, res, next) => {
 // INICIAR SERVIDOR
 const startServer = async () => {
     try {
-        await testConnection();
-        await syncDatabase();
-        
+        await sequelize.authenticate();
+        console.log('✅ Conectado ao banco de dados');
+
         server.listen(PORT, '0.0.0.0', () => {
-            console.log(`\n🚀 Servidor com SOCKET.IO rodando na porta ${PORT}`);
-            console.log(`📡 API: http://192.168.0.162:${PORT}`);
-            console.log(`🔔 Socket ativo!\n`);
+            console.log(`🚀 Servidor com SOCKET.IO rodando na porta ${PORT}`);
         });
-        
     } catch (error) {
         console.error('❌ Erro ao iniciar servidor:', error);
         process.exit(1);
     }
 };
+
 
 // START
 startServer();
