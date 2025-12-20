@@ -51,7 +51,7 @@ const testConnection = async () => {
 // Sincronizar todos os models com o banco
 const syncDatabase = async () => {
   try {
-    await sequelize.sync({ alter: true }); // Atualiza tabelas existentes
+    //await sequelize.sync({ alter: true }); // Atualiza tabelas existentes
     console.log('✅ Tabelas do banco sincronizadas!');
   } catch (error) {
     console.error('❌ Erro ao sincronizar tabelas:', error);
