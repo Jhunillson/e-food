@@ -5,7 +5,6 @@ const http = require('http');
 const { Server } = require('socket.io');
 const { sequelize } = require('./models');
 
-
 // Importar rotas
 const authRoutes = require('./routes/authRoutes');
 const restaurantRoutes = require('./routes/restaurantRoutes');
@@ -17,10 +16,6 @@ const addressRoutes = require('./routes/addressRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-
-console.log('🔧 Carregando adminRoutes...');
-console.log('adminRoutes type:', typeof adminRoutes);
-console.log('adminRoutes:', adminRoutes);
 
 // MIDDLEWARES
 app.use(cors());
@@ -60,11 +55,14 @@ app.get('/', (req, res) => {
         version: '1.1.0'
     });
 });
-console.log('📋 Registrando rotas do admin...');
-app.use('/api/admin', adminRoutes);
-console.log('✅ Rotas /api/admin registradas com sucesso');
 
-// Logo APÓS app.get('/', ...) e ANTES de app.use('/api/admin', adminRoutes)
+// 🔍 MIDDLEWARE DE LOG (ANTES DAS ROTAS)
+app.use((req, res, next) => {
+    console.log(`📡 ${req.method} ${req.path}`);
+    next();
+});
+
+// 🧪 ROTA DE TESTE
 app.post('/api/test', (req, res) => {
     console.log('🧪 Rota de teste chamada');
     console.log('Body:', req.body);
@@ -74,33 +72,27 @@ app.post('/api/test', (req, res) => {
         timestamp: new Date().toISOString()
     });
 });
-// ROTAS
+
+// ✅ ROTAS
+console.log('📋 Registrando rotas...');
 app.use('/api/admin', adminRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/restaurants', restaurantRoutes);
 app.use('/api/menu', menuRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/delivery', deliveryRoutes);
-
 app.use('/api/address', addressRoutes);
-app.use((req, res, next) => {
-    console.log(`📡 ${req.method} ${req.path}`);
-    console.log('📦 Body:', req.body);
-    next();
-});
-
-
-
-
+console.log('✅ Todas as rotas registradas!');
 
 // ROTA 404
 app.use((req, res) => {
+    console.log('⚠️ Rota não encontrada:', req.path);
     res.status(404).json({ success: false, message: 'Rota não encontrada' });
 });
 
 // ERRO GLOBAL
 app.use((err, req, res, next) => {
-    console.error('Erro:', err);
+    console.error('❌ Erro:', err);
     res.status(500).json({
         success: false,
         message: 'Erro interno do servidor',
@@ -114,8 +106,6 @@ const startServer = async () => {
         await sequelize.authenticate();
         console.log('✅ Conectado ao banco de dados');
 
-        // ADICIONE ESTA LINHA ABAIXO:
-        // alter: true ajusta as tabelas se você mudar algo no model futuramente
         await sequelize.sync({ alter: true }); 
         console.log('✅ Tabelas sincronizadas/criadas com sucesso');
 
