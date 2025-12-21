@@ -981,7 +981,7 @@ function renderPendingOrders(orders) {
 }
 
 // Aprovar pedido
-// Aprovar pedido
+
 async function approveOrder(orderId) {
     if (!confirm('✅ Confirmar aprovação deste pedido?\n\nO pedido será enviado ao restaurante.')) {
         return;
@@ -1017,7 +1017,7 @@ async function approveOrder(orderId) {
 }
 
 // Rejeitar pedido
-// Rejeitar pedido
+
 async function rejectOrder(orderId) {
     const reason = prompt('❌ Motivo da rejeição:\n\n(Obrigatório)');
     

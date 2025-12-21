@@ -5,21 +5,22 @@
  }
 
  async function handleLogin(event) {
-     event.preventDefault();
-     
-     const email = document.getElementById('email').value;
-     const password = document.getElementById('password').value;
-     
-     try {
-         const response = await fetch('http://192.168.0.162:3000/api/admin/login', {
-             method: 'POST',
-             headers: {
-                 'Content-Type': 'application/json'
-             },
-             body: JSON.stringify({ email, password })
-         });
-         
-         const data = await response.json();
+    event.preventDefault();
+    
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    try {
+        // Use a variável global API_URL que o api.js já configurou corretamente
+        const response = await fetch(`${API_URL}/admin/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
          
          if (data.success) {
              // Salvar dados do admin
