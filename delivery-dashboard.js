@@ -15,12 +15,7 @@ let sound = null;
 let soundUnlocked = false;
 
 // ✅ Substitua a seção de CONSTANTES inicial por esta lógica dinâmica
-const API_URL = window.location.hostname === "localhost" || 
-                window.location.hostname === "127.0.0.1"
-                ? "http://localhost:3000/api"
-                : "https://e-food-production.up.railway.app/api";
 
-console.log("🛵 Delivery API conectada em:", API_URL);
 
 // E remova a linha 383: const API_URL = 'http://localhost:3000/api'; dentro de loadDeliveryHistory
 
