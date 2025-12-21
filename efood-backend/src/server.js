@@ -73,6 +73,31 @@ app.post('/api/test', (req, res) => {
     });
 });
 
+// 🆕 ROTA TEMPORÁRIA PARA CRIAR ADMIN
+app.post('/api/create-first-admin', async (req, res) => {
+    try {
+        const bcrypt = require('bcrypt');
+        const { Admin } = require('./models');
+        
+        const existing = await Admin.findOne({ where: { email: 'admin@efood.com' } });
+        if (existing) {
+            return res.json({ success: true, message: 'Admin já existe!' });
+        }
+        
+        const hashedPassword = await bcrypt.hash('admin123', 10);
+        const admin = await Admin.create({
+            name: 'Admin Principal',
+            email: 'admin@efood.com',
+            password: hashedPassword,
+            role: 'super_admin'
+        });
+        
+        res.json({ success: true, message: 'Admin criado!', admin: { email: admin.email } });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
 // ✅ ROTAS
 console.log('📋 Registrando rotas...');
 app.use('/api/admin', adminRoutes);
