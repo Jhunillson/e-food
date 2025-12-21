@@ -20,7 +20,7 @@ function getBaseURL() {
     }
 
     console.log("🌍 Domínio remoto detectado → usando URL de produção");
-    return "https://SEU-DOMINIO-AQUI/api";
+    return "https://e-food-production.up.railway.app/api";
 }
 
 const API_URL = getBaseURL();

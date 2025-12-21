@@ -14,6 +14,13 @@ let lastPendingCount = 0;
 
 //const API_URL = 'http://localhost:3000/api';
 
+const API_URL = window.location.hostname === "localhost" || 
+                window.location.hostname === "127.0.0.1"
+                ? "http://localhost:3000/api"
+                : "https://e-food-production.up.railway.app/api";
+
+console.log("🔗 Admin API conectada em:", API_URL);
+
 // ========================================
 // INICIALIZAÇÃO
 // ========================================
@@ -1297,7 +1304,6 @@ function showAdminOrderNotification(qtd) {
 
 // 🔔 Verificar novos pedidos pendentes
 
-// 🔔 Verificar novos pedidos pendentes
 async function checkNewPendingOrdersWithSound() {
     console.log('🔍 [DEBUG] Verificando pedidos pendentes...', {
         soundUnlocked: soundUnlocked,

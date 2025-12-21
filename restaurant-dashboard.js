@@ -5,16 +5,22 @@ let lastOrderCount = 0;
 let sound = null;
 let soundUnlocked = false;
 
-//const socket = io('http://localhost:3000');
-//const socket = io('http://192.168.0.162:3000');
-const socketURL =
-    window.location.hostname === "localhost" ||
-    window.location.hostname === "127.0.0.1"
-        ? "http://localhost:3000"
-        : `http://${window.location.hostname}:3000`;
+// FUNÇÃO PARA PEGAR A URL DO SERVIDOR (RAILWAY OU LOCAL)
+function getServerURL() {
+    const isLocal = window.location.hostname === "localhost" || 
+                   window.location.hostname === "127.0.0.1";
+    
+    // Retorna a URL do Railway se não estiver em localhost
+    return isLocal ? "http://localhost:3000" : "https://e-food-production.up.railway.app";
+}
 
-const socket = io(socketURL);
-console.log("🔌 Socket conectado a:", socketURL);
+const socketURL = getServerURL();
+// Adicionamos { transports: ['websocket'] } para evitar erros de CORS e Proxy no Vercel
+const socket = io(socketURL, {
+    transports: ['websocket']
+});
+
+console.log("🔌 Socket tentando conectar a:", socketURL);
 
 
 // Dados do restaurante atual
