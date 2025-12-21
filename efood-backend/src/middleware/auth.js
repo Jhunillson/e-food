@@ -121,6 +121,7 @@ exports.authenticateDelivery = (req, res, next) => {
 };
 
 // Middleware para admin
+
 exports.authenticateAdmin = (req, res, next) => {
     try {
         const token = req.headers.authorization?.replace('Bearer ', '');
@@ -134,8 +135,8 @@ exports.authenticateAdmin = (req, res, next) => {
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET || 'seu_secret_key');
         
-        // CORRIGIDO: type → role
-        if (decoded.role !== 'admin') {
+        // ✅ ACEITAR admin OU super_admin
+        if (decoded.role !== 'admin' && decoded.role !== 'super_admin') {
             return res.status(403).json({
                 success: false,
                 message: 'Acesso negado - Apenas administradores'
