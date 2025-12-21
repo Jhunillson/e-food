@@ -6,9 +6,14 @@ const jwt = require('jsonwebtoken');
 // Login do admin
 exports.login = async (req, res) => {
     try {
+
+        console.log('🔐 Login admin chamado');
+        console.log('Body recebido:', req.body);
+        
         const { email, password } = req.body;
 
         const admin = await Admin.findOne({ where: { email } });
+        
         if (!admin) {
             return res.status(404).json({
                 success: false,
