@@ -44,19 +44,23 @@ function updateProfileUI() {
     if (userNameBtn) userNameBtn.textContent = firstName
 }
 
-// ---------- Carregar dados do usuário (CORRIGIDO) ----------
+
+// ---------- Carregar dados do usuário (CORRIGIDO PARA PRODUÇÃO) ----------
 async function loadUserData() {
+    // 1. Tenta pegar o token de qualquer um dos storages
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
     
     if (!token) {
+        console.warn('⚠️ Nenhum token encontrado, redirecionando para login.');
         sessionStorage.setItem('redirectAfterLogin', 'profile.html');
         window.location.href = 'auth.html';
         return;
     }
     
     try {
-        // Fazer a chamada para a rota protegida que retorna o perfil
-        const response = await fetch('http://192.168.0.162:3000/api/auth/profile', {
+        // 2. USAR A VARIÁVEL GLOBAL API_URL (Removendo o IP fixo 192.168...)
+        // Certifique-se que o endpoint no seu backend é /api/auth/profile ou apenas /auth/profile
+        const response = await fetch(`${API_URL}/auth/profile`, { 
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -67,35 +71,37 @@ async function loadUserData() {
         const result = await response.json();
 
         if (result.success) {
-            currentUser = result.data; // O objeto User
+            currentUser = result.data; 
             
-            // 1. Atualizar a interface do usuário com os dados do perfil
+            // Atualiza o storage local para garantir que o fallback funcione na próxima vez
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            
             updateProfileUI(); 
-
-            // 2. CHAMA A FUNÇÃO LOCAL QUE CARREGA OS ENDEREÇOS DO LOCAL STORAGE E RENDERIZA
-            loadAddresses(); // <-- CORREÇÃO PRINCIPAL
+            loadAddresses(); 
             
-            console.log('✅ Perfil e Endereços carregados:', currentUser);
+            console.log('✅ Perfil carregado via API');
         } else {
-            // Se falhar (ex: token inválido)
-            showNotification(`Erro ao carregar perfil: ${result.message}`, 'error');
+            // Se o token expirou ou é inválido, limpa e manda para login
+            console.error('❌ Sessão inválida:', result.message);
+            localStorage.removeItem('token');
             window.location.href = 'auth.html';
         }
 
     } catch (error) {
-        console.error('Erro de rede:', error);
-        showNotification('Erro de conexão ao servidor.', 'error');
+        console.error('🌐 Erro de rede/servidor:', error);
         
-        // Fallback: tentar carregar o usuário e endereços do Local Storage se a API falhar
+        // Fallback: Se o servidor estiver fora do ar, tenta carregar o que está salvo no PC do usuário
         const userJson = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
         if (userJson) {
             currentUser = JSON.parse(userJson);
             updateProfileUI();
             loadAddresses();
+            showNotification('Modo offline: Carregando dados locais.', 'info');
+        } else {
+            showNotification('Erro de conexão ao servidor.', 'error');
         }
     }
 }
-
 // OBSERVAÇÃO: A FUNÇÃO renderAddressSelector FOI REMOVIDA POIS loadAddresses CHAMA renderAddresses (função mais completa)
 
 // Mostrar seção
