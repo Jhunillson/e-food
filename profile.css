@@ -362,52 +362,61 @@ nav a.active {
 }
 
 /* Responsive */
+/* Estilo do Botão Hamburger (Escondido por padrão no Desktop) */
+.mobile-menu-toggle {
+    display: none;
+    width: 100%;
+    padding: 15px;
+    background: #ff6b35;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
 @media (max-width: 968px) {
     .profile-container {
-        grid-template-columns: 1fr; /* Coluna única no celular */
-        gap: 1rem;
+        grid-template-columns: 1fr;
         padding: 10px;
     }
-    
+
     .profile-sidebar {
         position: static;
-        padding: 1rem;
-        width: 100%;
+        box-shadow: none;
+        background: transparent;
+        padding: 0;
     }
 
-    /* Esconde o avatar no mobile para dar espaço ao menu */
-    .profile-avatar {
-        display: none; 
-    }
-    
+    .profile-avatar { display: none; }
+
+    /* Exibe o botão Hamburger */
+    .mobile-menu-toggle { display: flex; }
+
+    /* O menu vira um dropdown flutuante */
     .profile-menu {
-        display: flex;
-        flex-direction: row !important; /* Força ficar lado a lado */
-        overflow-x: auto; /* Permite deslizar para o lado */
-        padding-bottom: 15px;
-        gap: 10px;
-        border-bottom: 1px solid #eee;
-        -webkit-overflow-scrolling: touch;
+        display: none; /* Escondido até clicar no botão */
+        flex-direction: column !important;
+        background: white;
+        position: absolute;
+        width: calc(100% - 20px);
+        z-index: 1000;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        border-radius: 10px;
+        border: 1px solid #eee;
+        padding: 10px;
     }
-    
+
+    .profile-menu.show {
+        display: flex; /* Mostra quando a classe 'show' for adicionada */
+    }
+
     .menu-item {
-        white-space: nowrap; /* Não deixa o texto quebrar */
-        padding: 10px 15px;
-        background: #f8f9fa;
-        flex-shrink: 0; /* Impede que os botões esmaguem */
-        font-size: 14px;
-        display: flex;
-        align-items: center;
-    }
-
-    .profile-content {
+        border-bottom: 1px solid #f9f9f9;
         padding: 15px;
-        margin-top: 10px;
-    }
-
-    /* Ajuste para as tabelas/grids de endereços caberem na tela */
-    .addresses-grid, .payments-grid {
-        grid-template-columns: 1fr !important;
     }
 }
 
