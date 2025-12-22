@@ -96,7 +96,7 @@ async function loadUserData() {
             currentUser = JSON.parse(userJson);
             updateProfileUI();
             loadAddresses();
-            showNotification('Modo offline: Carregando dados locais.', 'info');
+            showNotification('Carregando dados locais.', 'info');
         } else {
             showNotification('Erro de conexão ao servidor.', 'error');
         }
