@@ -644,7 +644,7 @@ async function loadAddresses() {
     let userId = null;
     
     try {
-        const response = await fetch('http://192.168.0.162:3000/api/auth/profile', {
+        const response = await fetch(`${API_URL}/auth/profile`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
