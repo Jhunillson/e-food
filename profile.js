@@ -640,22 +640,3 @@ document.addEventListener('DOMContentLoaded', function() {
     loadUserData();
     setupPhoneFormatting();
 });
-// Função para abrir/fechar o menu no mobile
-function toggleMobileMenu() {
-    const menu = document.getElementById('profileMenu');
-    menu.classList.toggle('show');
-}
-
-// Função para selecionar a seção e fechar o menu
-function selectSection(sectionId, sectionName) {
-    // 1. Chama a sua função existente para mostrar a seção
-    showSection(sectionId);
-    
-    // 2. Atualiza o texto do botão mobile
-    const label = document.getElementById('activeSectionName');
-    if (label) label.textContent = sectionName;
-    
-    // 3. Fecha o menu se estiver no mobile
-    const menu = document.getElementById('profileMenu');
-    menu.classList.remove('show');
-}

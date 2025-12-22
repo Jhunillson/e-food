@@ -362,61 +362,23 @@ nav a.active {
 }
 
 /* Responsive */
-/* Estilo do Botão Hamburger (Escondido por padrão no Desktop) */
-.mobile-menu-toggle {
-    display: none;
-    width: 100%;
-    padding: 15px;
-    background: #ff6b35;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-weight: bold;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer;
-    margin-bottom: 10px;
-}
-
 @media (max-width: 968px) {
     .profile-container {
         grid-template-columns: 1fr;
-        padding: 10px;
     }
-
+    
     .profile-sidebar {
         position: static;
-        box-shadow: none;
-        background: transparent;
-        padding: 0;
     }
-
-    .profile-avatar { display: none; }
-
-    /* Exibe o botão Hamburger */
-    .mobile-menu-toggle { display: flex; }
-
-    /* O menu vira um dropdown flutuante */
+    
     .profile-menu {
-        display: none; /* Escondido até clicar no botão */
-        flex-direction: column !important;
-        background: white;
-        position: absolute;
-        width: calc(100% - 20px);
-        z-index: 1000;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        border-radius: 10px;
-        border: 1px solid #eee;
-        padding: 10px;
+        flex-direction: row;
+        overflow-x: auto;
+        padding-bottom: 1rem;
     }
-
-    .profile-menu.show {
-        display: flex; /* Mostra quando a classe 'show' for adicionada */
-    }
-
+    
     .menu-item {
-        border-bottom: 1px solid #f9f9f9;
-        padding: 15px;
+        white-space: nowrap;
     }
 }
 
