@@ -364,21 +364,37 @@ nav a.active {
 /* Responsive */
 @media (max-width: 968px) {
     .profile-container {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr; /* Transforma em coluna única */
+        gap: 1rem;
     }
     
     .profile-sidebar {
         position: static;
+        padding: 1rem;
+    }
+
+    .profile-avatar {
+        display: none; /* Esconde o avatar no mobile para ganhar espaço */
     }
     
     .profile-menu {
-        flex-direction: row;
-        overflow-x: auto;
-        padding-bottom: 1rem;
+        flex-direction: row; /* Alinha itens lado a lado */
+        overflow-x: auto; /* Permite rolar para os lados se não couber */
+        padding-bottom: 10px;
+        gap: 0.5rem;
+        -webkit-overflow-scrolling: touch; /* Melhora rolagem no iPhone */
     }
     
     .menu-item {
-        white-space: nowrap;
+        white-space: nowrap; /* Impede que o texto quebre linha */
+        padding: 0.8rem 1rem;
+        flex-shrink: 0; /* Impede que os botões diminuam de tamanho */
+        font-size: 0.9rem;
+    }
+
+    .profile-content {
+        padding: 1.5rem;
+        min-height: auto;
     }
 }
 
