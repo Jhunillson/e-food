@@ -367,11 +367,30 @@
 }
 
 /* Responsive */
+/* Cart Sidebar - Desktop */
+.cart-sidebar {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 100px;
+    max-height: calc(100vh - 120px);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Cart Items com scroll */
+.cart-items {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+    /* Adicionar padding inferior para não cortar o último item */
+    padding-bottom: 1rem;
+}
+
+/* Mobile - Ajustes CRÍTICOS */
 @media (max-width: 1024px) {
-    .menu-section {
-        grid-template-columns: 1fr;
-    }
-    
     .cart-sidebar {
         position: fixed;
         right: -100%;
@@ -383,14 +402,87 @@
         z-index: 1000;
         transition: right 0.3s;
         border-radius: 0;
+        padding: 1rem;
+        /* IMPORTANTE: Manter o layout flexível */
+        display: flex;
+        flex-direction: column;
     }
     
     .cart-sidebar.active {
         right: 0;
     }
     
+    /* Header do carrinho fixo no topo */
+    .cart-header {
+        flex-shrink: 0;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #f0f0f0;
+    }
+    
+    /* Lista de itens com scroll */
+    .cart-items {
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+        margin-bottom: 1rem;
+        /* Adicionar espaço para não cortar itens */
+        padding-right: 5px;
+    }
+    
+    /* Footer fixo na parte inferior */
+    .cart-footer {
+        flex-shrink: 0;
+        border-top: 2px solid #f0f0f0;
+        padding-top: 1rem;
+        background: white;
+        /* Garantir que fica por cima */
+        z-index: 1;
+    }
+    
     .close-cart {
         display: block;
+    }
+    
+    /* Melhorar visualização dos totais no mobile */
+    .cart-total {
+        font-size: 0.95rem;
+        margin-bottom: 0.6rem;
+    }
+    
+    .cart-total.total {
+        font-size: 1.1rem;
+        margin-top: 0.5rem;
+        padding-top: 0.8rem;
+    }
+    
+    /* Botão de checkout mais visível */
+    .btn-checkout {
+        width: 100%;
+        padding: 1rem;
+        font-size: 1rem;
+        margin-top: 0.8rem;
+    }
+}
+
+/* Estilização do scroll para mobile */
+@media (max-width: 1024px) {
+    .cart-items::-webkit-scrollbar {
+        width: 4px;
+    }
+    
+    .cart-items::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+    
+    .cart-items::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+    }
+    
+    .cart-items::-webkit-scrollbar-thumb:hover {
+        background: #555;
     }
 }
 
