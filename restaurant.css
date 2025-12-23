@@ -507,7 +507,23 @@ body.overlay-active {
 }
 
 /* Mobile - Ajustes CRÍTICOS */
-@media (max-width: 1024px) {
+/* ============================================
+   RESPONSIVE - MOBILE CRÍTICO
+   ============================================ */
+
+   @media (max-width: 1024px) {
+    .menu-section {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Grid com 2 colunas no iPad */
+    .menu-grid {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
+    
+    /* ========================================
+       CART SIDEBAR - MOBILE FIXO
+       ======================================== */
     .cart-sidebar {
         position: fixed;
         right: -100%;
@@ -515,12 +531,11 @@ body.overlay-active {
         width: 90%;
         max-width: 400px;
         height: 100vh;
-        max-height: 100vh;
         z-index: 1000;
         transition: right 0.3s;
         border-radius: 0;
         padding: 1rem;
-        /* IMPORTANTE: Manter o layout flexível */
+        /* Layout em coluna */
         display: flex;
         flex-direction: column;
     }
@@ -529,56 +544,108 @@ body.overlay-active {
         right: 0;
     }
     
-    /* Header do carrinho fixo no topo */
+    /* Header fixo no topo - 15% da altura */
     .cart-header {
         flex-shrink: 0;
-        margin-bottom: 1rem;
-        padding-bottom: 1rem;
-        border-bottom: 2px solid #f0f0f0;
+        height: 70px;
+        margin-bottom: 0.5rem;
     }
     
-    /* Lista de itens com scroll */
+    /* Items com altura limitada - 50% da tela */
     .cart-items {
-        flex: 1;
+        flex: 0 1 auto;
+        max-height: 50vh;
         overflow-y: auto;
         overflow-x: hidden;
-        margin-bottom: 1rem;
-        /* Adicionar espaço para não cortar itens */
         padding-right: 5px;
+        margin-bottom: 0.5rem;
     }
     
-    /* Footer fixo na parte inferior */
+    /* Reduzir tamanho dos itens no mobile */
+    .cart-item {
+        padding: 0.8rem 0.5rem;
+        gap: 0.8rem;
+    }
+    
+    .cart-item-name {
+        font-size: 0.95rem;
+    }
+    
+    .cart-item-price {
+        font-size: 0.9rem;
+    }
+    
+    /* Footer fixo na parte inferior - compacto */
     .cart-footer {
         flex-shrink: 0;
-        border-top: 2px solid #f0f0f0;
-        padding-top: 1rem;
+        padding-top: 0.8rem;
         background: white;
-        /* Garantir que fica por cima */
-        z-index: 1;
+    }
+    
+    /* Reduzir espaçamento dos totais */
+    .cart-total {
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .cart-total.total {
+        font-size: 1rem;
+        margin-top: 0.3rem;
+        padding-top: 0.5rem;
+    }
+    
+    /* Botão de checkout menor */
+    .btn-checkout {
+        padding: 0.9rem;
+        font-size: 1rem;
+        margin-top: 0.5rem;
     }
     
     .close-cart {
         display: block;
     }
-    
-    /* Melhorar visualização dos totais no mobile */
-    .cart-total {
-        font-size: 0.95rem;
-        margin-bottom: 0.6rem;
+}
+
+/* Mobile - Celular pequeno */
+@media (max-width: 768px) {
+    .restaurant-main-info {
+        flex-direction: column;
+        text-align: center;
     }
     
-    .cart-total.total {
-        font-size: 1.1rem;
-        margin-top: 0.5rem;
-        padding-top: 0.8rem;
+    .restaurant-main-info h1 {
+        font-size: 2rem;
     }
     
-    /* Botão de checkout mais visível */
-    .btn-checkout {
-        width: 100%;
-        padding: 1rem;
-        font-size: 1rem;
-        margin-top: 0.8rem;
+    .restaurant-meta {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    /* 1 coluna no celular */
+    .menu-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Carrinho ainda mais compacto */
+    .cart-items {
+        max-height: 45vh;
+    }
+}
+
+/* Scroll personalizado */
+@media (max-width: 1024px) {
+    .cart-items::-webkit-scrollbar {
+        width: 3px;
+    }
+    
+    .cart-items::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    
+    .cart-items::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 10px;
     }
 }
 
