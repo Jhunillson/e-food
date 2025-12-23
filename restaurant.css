@@ -1,3 +1,7 @@
+/* ============================================
+   RESTAURANT.CSS - ARQUIVO COMPLETO CORRIGIDO
+   ============================================ */
+
 /* Restaurant Header */
 .restaurant-header {
     background: #f8f9fa;
@@ -105,10 +109,10 @@
     border-color: #ff6b35;
 }
 
-/* Menu Grid */
+/* Menu Grid - CORRIGIDO */
 .menu-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1.5rem;
 }
 
@@ -182,7 +186,7 @@
     transform: scale(1.05);
 }
 
-/* Cart Sidebar */
+/* Cart Sidebar - Desktop */
 .cart-sidebar {
     background: white;
     border-radius: 15px;
@@ -202,6 +206,7 @@
     margin-bottom: 1.5rem;
     padding-bottom: 1rem;
     border-bottom: 2px solid #f0f0f0;
+    flex-shrink: 0;
 }
 
 .cart-header h3 {
@@ -218,10 +223,12 @@
     display: none;
 }
 
+/* Cart Items com scroll */
 .cart-items {
     flex: 1;
     overflow-y: auto;
     margin-bottom: 1rem;
+    padding-bottom: 1rem;
 }
 
 .empty-cart {
@@ -289,6 +296,7 @@
 .cart-footer {
     border-top: 2px solid #f0f0f0;
     padding-top: 1rem;
+    flex-shrink: 0;
 }
 
 .cart-total {
@@ -366,27 +374,136 @@
     }
 }
 
-/* Responsive */
-/* Cart Sidebar - Desktop */
-.cart-sidebar {
-    background: white;
-    border-radius: 15px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 20px rgba(0,0,0,0.1);
-    position: sticky;
-    top: 100px;
-    max-height: calc(100vh - 120px);
-    display: flex;
-    flex-direction: column;
+/* ============================================
+   RESPONSIVE - TABLET E MOBILE
+   ============================================ */
+
+/* Tablet - iPad */
+@media (max-width: 1024px) {
+    .menu-section {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Grid de itens com 2 colunas no iPad */
+    .menu-grid {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
+    
+    /* Cart Sidebar Mobile */
+    .cart-sidebar {
+        position: fixed;
+        right: -100%;
+        top: 0;
+        width: 90%;
+        max-width: 400px;
+        height: 100vh;
+        z-index: 1000;
+        transition: right 0.3s;
+        border-radius: 0;
+        padding: 1rem;
+    }
+    
+    .cart-sidebar.active {
+        right: 0;
+    }
+    
+    .cart-items {
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding-right: 5px;
+    }
+    
+    .close-cart {
+        display: block;
+    }
 }
 
-/* Cart Items com scroll */
-.cart-items {
-    flex: 1;
-    overflow-y: auto;
-    margin-bottom: 1rem;
-    /* Adicionar padding inferior para não cortar o último item */
-    padding-bottom: 1rem;
+/* Mobile - Celular */
+@media (max-width: 768px) {
+    /* Header do restaurante */
+    .restaurant-main-info {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .restaurant-main-info h1 {
+        font-size: 2rem;
+    }
+    
+    .restaurant-meta {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    /* Grid de 1 coluna no celular */
+    .menu-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Cart totais menores */
+    .cart-total {
+        font-size: 0.95rem;
+    }
+    
+    .cart-total.total {
+        font-size: 1.1rem;
+    }
+}
+
+/* Scroll estilizado no mobile */
+@media (max-width: 1024px) {
+    .cart-items::-webkit-scrollbar {
+        width: 4px;
+    }
+    
+    .cart-items::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+    
+    .cart-items::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+    }
+}
+
+/* ============================================
+   OVERLAY DE SOM (NÃO MODIFICAR)
+   ============================================ */
+#soundUnlockOverlay {
+    display: flex !important;
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: rgba(0, 0, 0, 0.95) !important;
+    z-index: 999999 !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+#unlockSoundBtn {
+    padding: 20px 40px !important;
+    font-size: 1.3rem !important;
+    background: #27ae60 !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 12px !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    touch-action: manipulation !important;
+    user-select: none !important;
+    min-width: 250px !important;
+    min-height: 60px !important;
+}
+
+#unlockSoundBtn:active {
+    transform: scale(0.95) !important;
+    background: #229954 !important;
+}
+
+body.overlay-active {
+    overflow: hidden !important;
 }
 
 /* Mobile - Ajustes CRÍTICOS */
@@ -484,60 +601,4 @@
     .cart-items::-webkit-scrollbar-thumb:hover {
         background: #555;
     }
-}
-
-@media (max-width: 768px) {
-    .restaurant-main-info {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .restaurant-main-info h1 {
-        font-size: 2rem;
-    }
-    
-    .restaurant-meta {
-        justify-content: center;
-        flex-wrap: wrap;
-    }
-}
-/* Forçar overlay sempre visível */
-#soundUnlockOverlay {
-    display: flex !important;
-    position: fixed !important;
-    inset: 0 !important;
-    width: 100vw !important;
-    height: 100vh !important;
-    background: rgba(0, 0, 0, 0.95) !important;
-    z-index: 999999 !important;
-    align-items: center !important;
-    justify-content: center !important;
-}
-
-/* Botão grande e clicável no mobile */
-#unlockSoundBtn {
-    padding: 20px 40px !important;
-    font-size: 1.3rem !important;
-    background: #27ae60 !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 12px !important;
-    font-weight: bold !important;
-    cursor: pointer !important;
-    -webkit-tap-highlight-color: rgba(39, 174, 96, 0.3) !important;
-    touch-action: manipulation !important;
-    user-select: none !important;
-    -webkit-user-select: none !important;
-    min-width: 250px !important;
-    min-height: 60px !important;
-}
-
-#unlockSoundBtn:active {
-    transform: scale(0.95) !important;
-    background: #229954 !important;
-}
-
-/* Garantir que nada bloqueia o overlay */
-body.overlay-active {
-    overflow: hidden !important;
 }
