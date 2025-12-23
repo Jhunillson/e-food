@@ -111,7 +111,12 @@ async function loadRestaurantMenu(restaurantId) {
     }
 }
 
-// Renderizar itens do menu
+// ========================================
+// CORREÇÃO DA FUNÇÃO renderMenuItems
+// ========================================
+
+// Substitua a função renderMenuItems existente por esta versão corrigida:
+
 function renderMenuItems(menuItems, category = 'all') {
     const menuGrid = document.getElementById('menuGrid');
     menuGrid.innerHTML = '';
@@ -119,16 +124,33 @@ function renderMenuItems(menuItems, category = 'all') {
     console.log('🔍 Filtrando por categoria:', category);
     console.log('📋 Total de itens:', menuItems.length);
     
-    // Normalizar categoria para comparação (minúscula e sem espaços)
+    // Normalizar categoria para comparação
     const normalizedCategory = category.toLowerCase().trim();
     
     const filteredItems = category === 'all' 
         ? menuItems 
         : menuItems.filter(item => {
-            // Normalizar a categoria do item também
             const itemCategory = (item.category || '').toLowerCase().trim();
-            console.log(`Comparando: "${itemCategory}" === "${normalizedCategory}"`);
-            return itemCategory === normalizedCategory;
+            
+            console.log(`Comparando: "${itemCategory}" com "${normalizedCategory}"`);
+            
+            // ✅ CORREÇÃO: Verificar correspondências flexíveis
+            // Permite "pizza" = "pizza", "bebida" = "bebida", "sobremesa" = "sobremesas"
+            if (itemCategory === normalizedCategory) {
+                return true;
+            }
+            
+            // Verificar plural/singular
+            if (itemCategory + 's' === normalizedCategory || itemCategory === normalizedCategory + 's') {
+                return true;
+            }
+            
+            // Verificar se o filtro está contido na categoria do item
+            if (itemCategory.includes(normalizedCategory) || normalizedCategory.includes(itemCategory)) {
+                return true;
+            }
+            
+            return false;
         });
     
     console.log('✅ Itens filtrados:', filteredItems.length);
