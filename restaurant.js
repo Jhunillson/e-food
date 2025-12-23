@@ -116,9 +116,22 @@ function renderMenuItems(menuItems, category = 'all') {
     const menuGrid = document.getElementById('menuGrid');
     menuGrid.innerHTML = '';
     
+    console.log('🔍 Filtrando por categoria:', category);
+    console.log('📋 Total de itens:', menuItems.length);
+    
+    // Normalizar categoria para comparação (minúscula e sem espaços)
+    const normalizedCategory = category.toLowerCase().trim();
+    
     const filteredItems = category === 'all' 
         ? menuItems 
-        : menuItems.filter(item => item.category === category);
+        : menuItems.filter(item => {
+            // Normalizar a categoria do item também
+            const itemCategory = (item.category || '').toLowerCase().trim();
+            console.log(`Comparando: "${itemCategory}" === "${normalizedCategory}"`);
+            return itemCategory === normalizedCategory;
+        });
+    
+    console.log('✅ Itens filtrados:', filteredItems.length);
     
     if (filteredItems.length === 0) {
         menuGrid.innerHTML = `
