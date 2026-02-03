@@ -1,9 +1,13 @@
+
+
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 const http = require('http');
 const { Server } = require('socket.io');
 const { sequelize } = require('./models');
+
+
 
 // Importar rotas
 const authRoutes = require('./routes/authRoutes');
@@ -21,6 +25,15 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
+
+// No topo do seu server.js ou app.js
+app.use((req, res, next) => {
+    const start = Date.now();
+    res.on('finish', () => {
+      console.log(`${req.method} ${req.path} - ${Date.now() - start}ms`);
+    });
+    next();
+  });
 
 // ✅ SERVER HTTP (SOCKET.IO)
 const server = http.createServer(app);

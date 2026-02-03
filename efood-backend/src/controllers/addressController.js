@@ -1,5 +1,8 @@
-const Address = require('../models/Address');
+//const Address = require('../models/Address');
+//const Address = require('../models');
 
+const db = require('../models');
+const Address = db.Address;
 /* ============================================================
    DEFINIÇÃO CORRETA DAS FUNÇÕES (SEM exports.)
    ============================================================ */

@@ -1,7 +1,6 @@
-const { Order, Restaurant, User } = require('../models');
+const { Order, Restaurant, User, Delivery } = require('../models');
 const { Op } = require('sequelize');
 
-// Criar pedido
 // Criar pedido
 exports.createOrder = async (req, res) => {
     try {
@@ -33,9 +32,8 @@ exports.createOrder = async (req, res) => {
             }
         }
 
-        // 🆕 VERIFICAR SE É PAGAMENTO NA ENTREGA
-        const isDeliveryPayment = payment.method === 'delivery';
-        const orderStatus = isDeliveryPayment ? 'pending_admin_approval' : 'pending';
+        // 🆕 TODOS OS PEDIDOS COMEÇAM AGUARDANDO APROVAÇÃO DO ADMIN
+        const orderStatus = 'pending_admin_approval';
 
         // Criar pedido com dados do cliente
         const order = await Order.create({
@@ -48,35 +46,29 @@ exports.createOrder = async (req, res) => {
             deliveryFee,
             total,
             status: orderStatus,
-            requiresAdminApproval: isDeliveryPayment, // 🆕
+            requiresAdminApproval: true,
             clientName,      
             clientPhone,     
             clientAddress: `${address.street}, ${address.number}${address.complement ? ', ' + address.complement : ''}, ${address.neighborhood}, ${address.municipality}`
         });
         
-        // ✅ NOTIFICAÇÃO EM TEMPO REAL
+        // ✅ NOTIFICAÇÃO EM TEMPO REAL PARA ADMIN
         const io = req.app.get('io');
         
-        if (isDeliveryPayment) {
-            // 🆕 ENVIAR PARA ADMIN SE FOR PAGAMENTO NA ENTREGA
-            io.emit('newPendingApproval', order);
-            console.log('🔔 Pedido enviado para aprovação do admin:', order.id);
-        } else {
-            // ENVIAR DIRETO PARA RESTAURANTE
-            io.to(`restaurant_${restaurantId}`).emit('newOrder', order);
-            console.log('📢 Pedido enviado via Socket ao restaurante:', restaurantId);
-        }
+        // 🔒 TODOS os pedidos vão primeiro para o ADMIN
+        io.emit('newPendingApproval', order);
+
+        console.log('🕒 Pedido aguardando aprovação do admin:', order.id);
         
         console.log('✅ Pedido criado com sucesso - ID:', order.id);
 
         res.status(201).json({
             success: true,
-            message: isDeliveryPayment 
-                ? 'Pedido criado! Aguardando aprovação administrativa.' 
-                : 'Pedido criado com sucesso',
+            message: 'Pedido criado! Aguardando aprovação administrativa.',
             data: order,
-            requiresApproval: isDeliveryPayment // 🆕
+            requiresApproval: true
         });
+        
     } catch (error) {
         console.error('❌ Erro ao criar pedido:', error);
         res.status(500).json({
@@ -167,64 +159,7 @@ exports.getRestaurantOrders = async (req, res) => {
     }
 };
 
-
-// Buscar pedido por ID
-exports.getOrderById = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const userId = req.user ? req.user.id : null;
-        const userType = req.user ? req.user.type : null;
-
-        const order = await Order.findByPk(id, {
-            include: [
-                {
-                    model: Restaurant,
-                    as: 'restaurant',
-                    attributes: ['id', 'name', 'icon', 'phone']
-                },
-                {
-                    model: User,
-                    as: 'user',
-                    attributes: ['id', 'name', 'phone']
-                }
-            ]
-        });
-
-        if (!order) {
-            return res.status(404).json({
-                success: false,
-                message: 'Pedido não encontrado'
-            });
-        }
-
-        // Verificar permissão
-        if (userType === 'user' && order.userId !== userId) {
-            return res.status(403).json({
-                success: false,
-                message: 'Sem permissão para ver este pedido'
-            });
-        }
-
-        if (userType === 'restaurant' && order.restaurantId !== userId) {
-            return res.status(403).json({
-                success: false,
-                message: 'Sem permissão para ver este pedido'
-            });
-        }
-
-        res.json({
-            success: true,
-            data: order
-        });
-    } catch (error) {
-        console.error('Erro ao buscar pedido:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Erro ao buscar pedido',
-            error: error.message
-        });
-    }
-    // Buscar pedido por ID
+// Buscar pedido por ID (FUNÇÃO ÚNICA - REMOVIDA DUPLICAÇÃO)
 exports.getOrderById = async (req, res) => {
     try {
         const { id } = req.params;
@@ -244,7 +179,7 @@ exports.getOrderById = async (req, res) => {
                     attributes: ['id', 'name', 'phone']
                 },
                 {
-                    model: Delivery, // ← ADICIONE ESTE RELACIONAMENTO
+                    model: Delivery,
                     as: 'delivery',
                     attributes: ['id', 'name', 'phone', 'vehicle', 'vehiclePlate']
                 }
@@ -286,9 +221,8 @@ exports.getOrderById = async (req, res) => {
         });
     }
 };
-};
 
-// Atualizar status do pedido (apenas restaurante)
+// Atualizar status do pedido (apenas restaurante) - COM BLOQUEIO DE APROVAÇÃO ADMIN
 exports.updateOrderStatus = async (req, res) => {
     try {
         const restaurantId = req.user.id;
@@ -319,8 +253,27 @@ exports.updateOrderStatus = async (req, res) => {
             });
         }
 
+        // 🔒 BLOQUEIO: Restaurante não pode alterar pedido sem aprovação do admin
+        if (order.status === 'pending_admin_approval') {
+            return res.status(403).json({
+                success: false,
+                message: 'Pedido ainda aguarda aprovação do administrador. Você não pode alterar o status até que seja aprovado.'
+            });
+        }
+
         // Atualizar status
         await order.update({ status });
+
+        // ✅ Notificação em tempo real
+        const io = req.app.get('io');
+        if (io) {
+            io.emit('orderStatusUpdated', {
+                orderId: order.id,
+                status: order.status,
+                restaurantId: order.restaurantId,
+                userId: order.userId
+            });
+        }
 
         res.json({
             success: true,
@@ -389,6 +342,7 @@ exports.getRestaurantStats = async (req, res) => {
         });
     }
 };
+
 // Avaliar pedido
 exports.rateOrder = async (req, res) => {
     try {

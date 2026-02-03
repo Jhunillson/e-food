@@ -362,7 +362,8 @@ function validatePayment() {
     
     orderData.payment = {
         method: paymentMethod,
-        methodName: getPaymentMethodName(paymentMethod)
+        methodName: getPaymentMethodName(paymentMethod),
+        status: 'pending' // 🆕 SEMPRE PENDING PARA APROVAÇÃO DO ADMIN
     };
     
     if (paymentMethod === 'card') {
@@ -409,7 +410,6 @@ function selectPayment(method) {
     document.querySelectorAll('.payment-option').forEach(option => {
         option.classList.remove('selected');
     });
-    const savedAddressesJson = localStorage.getItem(`addresses_${userId}`);
 
     // NOTA: É necessário o 'event' global ou passar 'event' como argumento
     // Se estiver a usar o onclick diretamente no HTML, a linha abaixo funciona.
@@ -455,6 +455,15 @@ function showConfirmation() {
     const confirmPayment = document.getElementById('confirmPayment');
     let paymentText = `<p><strong>Método:</strong> ${orderData.payment.methodName}</p>`;
     
+    // 🆕 ADICIONAR AVISO DE APROVAÇÃO ADMINISTRATIVA
+    paymentText += `
+        <div style="margin-top: 10px; padding: 12px; background: #fff3cd; border-left: 4px solid #ff6b35; border-radius: 6px;">
+            <p style="margin: 0; color: #856404; font-size: 0.9rem;">
+                <strong>⚠️ Atenção:</strong> Todos os pedidos passam por aprovação administrativa antes de serem enviados ao restaurante.
+            </p>
+        </div>
+    `;
+    
     if (orderData.payment.cardNumber) {
         paymentText += `<p><strong>Cartão:</strong> **** **** **** ${orderData.payment.cardNumber}</p>`;
     }
@@ -495,8 +504,8 @@ async function finishOrder() {
         return;
     }
 
-    // 🆕 VERIFICAR SE É PAGAMENTO NA ENTREGA
-    const isDeliveryPayment = orderData.payment.method === 'delivery';
+    // 🆕 TODOS OS MÉTODOS DE PAGAMENTO PASSAM PELO ADMIN
+    const paymentMethod = orderData.payment.method;
     
     let confirmMsg = `CONFIRMAR PEDIDO\n\n` +
         `📍 Endereço de Entrega:\n` +
@@ -506,10 +515,8 @@ async function finishOrder() {
         `${a.province}\n\n` +
         `💳 Pagamento: ${orderData.payment.methodName}\n\n`;
     
-    // 🆕 AVISO SE FOR PAGAMENTO NA ENTREGA
-    if (isDeliveryPayment) {
-        confirmMsg += `⚠️ ATENÇÃO: Seu pedido será enviado para aprovação administrativa antes de ser processado.\n\n`;
-    }
+    // 🆕 AVISO PARA TODOS OS MÉTODOS DE PAGAMENTO
+    confirmMsg += `⚠️ IMPORTANTE: Seu pedido será enviado para aprovação administrativa antes de ser processado pelo restaurante.\n\n`;
     
     confirmMsg += `Confirmar pedido?`;
 
@@ -525,11 +532,16 @@ async function finishOrder() {
         restaurantId: restaurantInfo.restaurantId || 1,
         items: cart,
         address: orderData.address,
-        payment: orderData.payment,
+        payment: {
+            method: orderData.payment.method,
+            status: 'pending' // 🆕 SEMPRE PENDING - TODOS PASSAM PELO ADMIN
+        },
         subtotal,
         deliveryFee,
         total
     };
+
+    console.log('📦 Dados do pedido enviados:', pedidoData);
 
     try {
         if (typeof OrderAPI !== 'undefined' && typeof OrderAPI.create === 'function') {
@@ -539,12 +551,21 @@ async function finishOrder() {
                 sessionStorage.removeItem('cart');
                 sessionStorage.removeItem('restaurant');
 
-                // 🆕 MENSAGEM DIFERENTE SE REQUER APROVAÇÃO
-                if (response.requiresApproval) {
-                    alert(`⏳ Pedido enviado para aprovação!\n\nTotal: Kz ${formatCurrency(total)}\nPedido Nº ${response.data.id}\n\n⚠️ Seu pedido será revisado pelo administrador antes de ser enviado ao restaurante.`);
-                } else {
-                    alert(`✅ Pedido confirmado!\n\nTotal: Kz ${formatCurrency(total)}\nPedido Nº ${response.data.id}`);
-                }
+                // 🆕 MENSAGEM UNIFICADA PARA TODOS OS MÉTODOS
+                const paymentMethodText = paymentMethod === 'delivery' 
+                    ? 'Pagamento na entrega' 
+                    : paymentMethod === 'multicaixa' 
+                    ? 'Multicaixa Express' 
+                    : orderData.payment.methodName;
+
+                alert(
+                    `⏳ Pedido Recebido!\n\n` +
+                    `Total: Kz ${formatCurrency(total)}\n` +
+                    `Pedido Nº ${response.data.id}\n` +
+                    `Pagamento: ${paymentMethodText}\n\n` +
+                    `⚠️ Seu pedido está aguardando aprovação do administrador.\n` +
+                    `Assim que aprovado, será enviado ao restaurante para preparo.`
+                );
                 
                 window.location.href = 'orders.html';
             } else {
@@ -554,7 +575,19 @@ async function finishOrder() {
             console.error('OrderAPI.create não definida. Simulação de sucesso.');
             sessionStorage.removeItem('cart');
             sessionStorage.removeItem('restaurant');
-            alert(`✅ Pedido simulado confirmado!\n\nTotal: Kz ${formatCurrency(total)}\n(Voltar para Home)`);
+            
+            const paymentMethodText = paymentMethod === 'delivery' 
+                ? 'Pagamento na entrega' 
+                : paymentMethod === 'multicaixa' 
+                ? 'Multicaixa Express' 
+                : orderData.payment.methodName;
+                
+            alert(
+                `⏳ Pedido Recebido (Simulação)!\n\n` +
+                `Total: Kz ${formatCurrency(total)}\n` +
+                `Pagamento: ${paymentMethodText}\n\n` +
+                `⚠️ Seu pedido está aguardando aprovação administrativa.`
+            );
             window.location.href = 'index.html';
         }
        

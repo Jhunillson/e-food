@@ -172,7 +172,8 @@ exports.registerRestaurant = async (req, res) => {
             email,
             phone,
             address,
-            password
+            password,
+             isActive: false
         });
 
         // Gerar token
