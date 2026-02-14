@@ -70,7 +70,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       defaultValue: false
     },
-
     // 🕒 HORÁRIO DE FUNCIONAMENTO
     isOpen: {
       type: DataTypes.BOOLEAN,
@@ -95,6 +94,15 @@ module.exports = (sequelize, DataTypes) => {
     autoSchedule: {
       type: DataTypes.BOOLEAN,
       defaultValue: false
+    },
+    // 📍 COORDENADAS GPS PARA CÁLCULO DE ENTREGA
+    latitude: {
+      type: DataTypes.DECIMAL(10, 8),
+      allowNull: true
+    },
+    longitude: {
+      type: DataTypes.DECIMAL(11, 8),
+      allowNull: true
     }
   }, {
     tableName: 'restaurants',
