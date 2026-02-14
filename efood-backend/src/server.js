@@ -17,6 +17,8 @@ const orderRoutes = require('./routes/orderRoutes');
 const deliveryRoutes = require('./routes/deliveryRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const addressRoutes = require('./routes/addressRoutes');
+const deliveryPriceRoutes = require('./routes/deliveryPriceRoutes');
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -97,6 +99,7 @@ app.use('/api/menu', menuRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/delivery', deliveryRoutes);
 app.use('/api/address', addressRoutes);
+app.use('/api/delivery-price', deliveryPriceRoutes);
 console.log('✅ Todas as rotas registradas!');
 
 // ROTA 404
