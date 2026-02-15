@@ -7,55 +7,63 @@ const Address = db.Address;
    DEFINIÇÃO CORRETA DAS FUNÇÕES (SEM exports.)
    ============================================================ */
 
-const createAddress = async (req, res) => {
+   const createAddress = async (req, res) => {
     try {
-        const userId = req.user.id;
-
-        const {
-            label,
-            province,
-            municipality,
-            street,
-            number,
-            complement,
-            neighborhood,
-            reference,
-            isDefault
-        } = req.body;
-
-        // Se o novo endereço for default, remover default dos outros
-        if (isDefault) {
-            await Address.update({ isDefault: false }, { where: { userId } });
-        }
-
-        const newAddress = await Address.create({
-            userId,
-            label,
-            province,
-            municipality,
-            street,
-            number,
-            complement,
-            neighborhood,
-            reference,
-            isDefault: !!isDefault
-        });
-
-        res.json({
-            success: true,
-            message: "Endereço criado com sucesso!",
-            data: newAddress
-        });
-
+      const { 
+        label, 
+        province, 
+        municipality, 
+        street, 
+        number, 
+        neighborhood, 
+        reference, 
+        isDefault,
+        latitude,
+        longitude
+      } = req.body;
+  
+      const userId = req.user.id;
+  
+      // Se marcou como padrão, desmarcar outros
+      if (isDefault) {
+        await Address.update(
+          { isDefault: false },
+          { where: { userId } }
+        );
+      }
+  
+      // Criar endereço com coordenadas
+      const address = await Address.create({
+        userId,
+        label,
+        province,
+        municipality,
+        street,
+        number,
+        neighborhood,
+        reference,
+        isDefault,
+        latitude,
+        longitude
+      });
+  
+      console.log(`✅ Endereço criado com GPS: ${latitude}, ${longitude}`);
+  
+      res.status(201).json({
+        success: true,
+        message: 'Endereço criado com sucesso',
+        data: address
+      });
+  
     } catch (error) {
-        console.error("Erro ao criar endereço:", error);
-        res.status(500).json({
-            success: false,
-            message: "Erro ao criar endereço",
-            error: error.message
-        });
+      console.error('Erro ao criar endereço:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Erro ao criar endereço',
+        error: error.message
+      });
     }
-};
+  };
 
 
 /* ============================================================ */
