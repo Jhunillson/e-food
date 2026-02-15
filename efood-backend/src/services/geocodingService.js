@@ -95,27 +95,28 @@ class GeocodingService {
   // Calcular distância
   static async calculateDistance(sequelize, location1, location2) {
     try {
-      const query = `
-        SELECT calculate_distance(
-          :lat1, :lon1, :lat2, :lon2
-        ) as distance_km
-      `;
-
-      const result = await sequelize.query(query, {
-        replacements: {
-          lat1: location1.latitude,
-          lon1: location1.longitude,
-          lat2: location2.latitude,
-          lon2: location2.longitude
-        },
-        type: sequelize.QueryTypes.SELECT
-      });
-
-      return parseFloat(result[0].distance_km);
-
+      const lat1 = location1.latitude;
+      const lon1 = location1.longitude;
+      const lat2 = location2.latitude;
+      const lon2 = location2.longitude;
+  
+      const R = 6371; // Raio da Terra em km
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      
+      const a = 
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      const distance = R * c;
+  
+      console.log(`📏 Distância real calculada: ${distance.toFixed(2)} km`);
+      return distance;
+  
     } catch (error) {
-      console.error('Erro ao calcular distância:', error);
-      return 5;
+      console.error('Erro ao calcular distância no Node:', error);
+      return 1; // Retorne um valor menor como fallback para não prejudicar tanto o cliente
     }
   }
 

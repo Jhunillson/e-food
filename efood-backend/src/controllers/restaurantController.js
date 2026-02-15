@@ -189,3 +189,128 @@ exports.getRestaurantsByCategory = async (req, res) => {
         });
     }
 };
+const GeocodingService = require('../services/geocodingService');
+
+// Atualizar coordenadas de um restaurante
+exports.updateRestaurantCoordinates = async (req, res) => {
+  try {
+    const { restaurantId } = req.params;
+    
+    const restaurant = await Restaurant.findByPk(restaurantId);
+    
+    if (!restaurant) {
+      return res.status(404).json({
+        success: false,
+        message: 'Restaurante não encontrado'
+      });
+    }
+
+    // Geocodificar endereço
+    const addressObj = {
+      street: restaurant.address,
+      municipality: 'Luanda', // Extrair do endereço se possível
+      province: 'Luanda'
+    };
+
+    const coords = await GeocodingService.geocodeAddress(addressObj);
+
+    // Atualizar restaurante
+    await restaurant.update({
+      latitude: coords.latitude,
+      longitude: coords.longitude
+    });
+
+    res.json({
+      success: true,
+      message: 'Coordenadas atualizadas com sucesso',
+      data: {
+        id: restaurant.id,
+        name: restaurant.name,
+        address: restaurant.address,
+        latitude: coords.latitude,
+        longitude: coords.longitude
+      }
+    });
+
+  } catch (error) {
+    console.error('Erro ao atualizar coordenadas:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erro ao atualizar coordenadas',
+      error: error.message
+    });
+  }
+};
+
+// Geocodificar TODOS os restaurantes sem coordenadas
+exports.geocodeAllRestaurants = async (req, res) => {
+  try {
+    const restaurants = await Restaurant.findAll({
+      where: {
+        latitude: null
+      }
+    });
+
+    const results = [];
+
+    for (const restaurant of restaurants) {
+      try {
+        // Extrair informações do endereço
+        const addressParts = restaurant.address.split(',').map(s => s.trim());
+        
+        const addressObj = {
+          street: addressParts[0] || restaurant.address,
+          municipality: addressParts[1] || 'Luanda',
+          province: addressParts[2] || 'Luanda'
+        };
+
+        const coords = await GeocodingService.geocodeAddress(addressObj);
+
+        await restaurant.update({
+          latitude: coords.latitude,
+          longitude: coords.longitude
+        });
+
+        results.push({
+          id: restaurant.id,
+          name: restaurant.name,
+          status: 'success',
+          coordinates: coords
+        });
+
+        console.log(`✅ ${restaurant.name}: ${coords.latitude}, ${coords.longitude}`);
+
+      } catch (error) {
+        results.push({
+          id: restaurant.id,
+          name: restaurant.name,
+          status: 'error',
+          error: error.message
+        });
+        
+        console.error(`❌ Erro ao geocodificar ${restaurant.name}:`, error.message);
+      }
+
+      // Delay para não sobrecarregar API (Nominatim tem limite de 1 req/segundo)
+      await new Promise(resolve => setTimeout(resolve, 1500));
+    }
+
+    res.json({
+      success: true,
+      message: 'Geocodificação concluída',
+      data: {
+        total: restaurants.length,
+        processed: results.length,
+        results
+      }
+    });
+
+  } catch (error) {
+    console.error('Erro ao geocodificar restaurantes:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erro ao geocodificar restaurantes',
+      error: error.message
+    });
+  }
+};

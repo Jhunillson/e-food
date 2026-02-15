@@ -12,3 +12,6 @@ router.get('/category/:category', restaurantController.getRestaurantsByCategory)
 router.put('/update', authenticateRestaurant, restaurantController.updateRestaurant);
 
 module.exports = router;
+// Geocodificar restaurantes
+router.post('/geocode-all', restaurantController.geocodeAllRestaurants);
+router.post('/:restaurantId/geocode', restaurantController.updateRestaurantCoordinates);
