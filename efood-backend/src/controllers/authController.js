@@ -3,24 +3,50 @@ const { User, Restaurant, Address } = require('../models');
 
 require('dotenv').config();
 
-// Gerar token JWT - CORRIGIDO: usar "role" em vez de "type"
+// Gerar token JWT - usa "role"
 const generateToken = (id, role) => {
     return jwt.sign(
-        { id, role }, // MUDOU: type → role
+        { id, role },
         process.env.JWT_SECRET,
         { expiresIn: '7d' }
     );
 };
 
-// Registro de Cliente
+// Registro de Cliente COM GPS OBRIGATÓRIO
 exports.registerUser = async (req, res) => {
     try {
         const { 
             name, email, phone, password,
             label,
             province, municipality, street, number, 
-            complement, neighborhood, reference 
+            complement, neighborhood, reference,
+            latitude,  // 🆕 GPS OBRIGATÓRIO
+            longitude, // 🆕 GPS OBRIGATÓRIO
         } = req.body;
+
+        // Validar campos obrigatórios
+        if (!name || !email || !phone || !password) {
+            return res.status(400).json({
+                success: false,
+                message: 'Nome, email, telefone e senha são obrigatórios',
+            });
+        }
+
+        // 🆕 VALIDAR GPS OBRIGATÓRIO
+        if (!latitude || !longitude) {
+            return res.status(400).json({
+                success: false,
+                message: 'Localização GPS é obrigatória para o cadastro',
+            });
+        }
+
+        // Validar formato do GPS
+        if (typeof latitude !== 'number' || typeof longitude !== 'number') {
+            return res.status(400).json({
+                success: false,
+                message: 'Coordenadas GPS inválidas',
+            });
+        }
 
         // Verificar se usuário já existe
         const existingUser = await User.findOne({ where: { email } });
@@ -31,25 +57,28 @@ exports.registerUser = async (req, res) => {
             });
         }
 
-        // Criar usuário
+        // Criar usuário COM GPS
         const user = await User.create({
             name,
             email,
             phone,
             password,
-    
             province,
             municipality,
             street,
             number,
             complement,
             neighborhood,
-            reference
+            reference,
+            latitude,  // 🆕 SALVANDO GPS
+            longitude, // 🆕 SALVANDO GPS
         });
 
+        console.log(`✅ Usuário criado com GPS: ${latitude}, ${longitude}`);
 
+        // Criar endereço padrão na tabela addresses COM GPS
         const newAddress = await Address.create({
-            userId: user.id, // Usa a variável 'user'
+            userId: user.id,
             label: label || "Principal",
             province,
             municipality,
@@ -58,8 +87,12 @@ exports.registerUser = async (req, res) => {
             complement,
             neighborhood,
             reference,
+            latitude,  // 🆕 GPS NO ENDEREÇO
+            longitude, // 🆕 GPS NO ENDEREÇO
             isDefault: true
         });
+
+        console.log(`✅ Endereço criado com GPS: ${latitude}, ${longitude}`);
 
         // Gerar token
         const token = generateToken(user.id, 'user');
@@ -79,6 +112,8 @@ exports.registerUser = async (req, res) => {
                 complement: user.complement,
                 neighborhood: user.neighborhood,
                 reference: user.reference,
+                latitude: user.latitude,   // 🆕 RETORNANDO GPS
+                longitude: user.longitude, // 🆕 RETORNANDO GPS
                 token
             }
         });
@@ -127,6 +162,8 @@ exports.loginUser = async (req, res) => {
                 name: user.name,
                 email: user.email,
                 phone: user.phone,
+                latitude: user.latitude,   // Retornar GPS do usuário
+                longitude: user.longitude,
                 token
             }
         });
@@ -173,7 +210,7 @@ exports.registerRestaurant = async (req, res) => {
             phone,
             address,
             password,
-             isActive: false
+            isActive: false
         });
 
         // Gerar token
@@ -202,7 +239,7 @@ exports.registerRestaurant = async (req, res) => {
     }
 };
 
-// Login de Restaurante - CORRIGIDO
+// Login de Restaurante
 exports.loginRestaurant = async (req, res) => {
     const { email, password } = req.body;
 
@@ -233,7 +270,6 @@ exports.loginRestaurant = async (req, res) => {
             });
         }
 
-        // CORRIGIDO: usar generateToken para consistência
         const token = generateToken(restaurant.id, 'restaurant');
 
         res.json({
@@ -263,7 +299,7 @@ exports.loginRestaurant = async (req, res) => {
     }
 };
 
-// Obter perfil do usuário autenticado - CORRIGIDO
+// Obter perfil do usuário autenticado
 exports.getProfile = async (req, res) => {
     try {
         const { id, role } = req.user;
@@ -286,6 +322,8 @@ exports.getProfile = async (req, res) => {
                             'complement',
                             'neighborhood',
                             'reference',
+                            'latitude',  // 🆕 Incluir GPS
+                            'longitude', // 🆕 Incluir GPS
                             'isDefault'
                         ]
                     }
@@ -318,3 +356,5 @@ exports.getProfile = async (req, res) => {
         });
     }
 };
+
+module.exports = exports;

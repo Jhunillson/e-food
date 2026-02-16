@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       label: {
         type: DataTypes.STRING(50),
-        allowNull: false // Ex: Casa, Trabalho
+        allowNull: false
       },
       province: {
         type: DataTypes.STRING(50),
@@ -44,6 +44,14 @@ module.exports = (sequelize, DataTypes) => {
       isDefault: {
         type: DataTypes.BOOLEAN,
         defaultValue: false
+      },
+      latitude: {
+        type: DataTypes.DECIMAL(10, 8),
+        allowNull: true
+      },
+      longitude: {
+        type: DataTypes.DECIMAL(11, 8),
+        allowNull: true
       }
     }, {
       tableName: 'addresses',
@@ -51,5 +59,4 @@ module.exports = (sequelize, DataTypes) => {
     });
   
     return Address;
-  };
-  
+};
