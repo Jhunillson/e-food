@@ -12,7 +12,7 @@ const generateToken = (id, role) => {
     );
 };
 
-// Registro de Cliente COM GPS OBRIGATÓRIO
+// Registro de Cliente COM GPS OBRIGATÓRIO (salva apenas em addresses)
 exports.registerUser = async (req, res) => {
     try {
         const { 
@@ -57,7 +57,7 @@ exports.registerUser = async (req, res) => {
             });
         }
 
-        // Criar usuário COM GPS
+        // Criar usuário (SEM GPS - GPS fica apenas em addresses)
         const user = await User.create({
             name,
             email,
@@ -70,11 +70,9 @@ exports.registerUser = async (req, res) => {
             complement,
             neighborhood,
             reference,
-            latitude,  // 🆕 SALVANDO GPS
-            longitude, // 🆕 SALVANDO GPS
         });
 
-        console.log(`✅ Usuário criado com GPS: ${latitude}, ${longitude}`);
+        console.log(`✅ Usuário criado: ${user.name} (${user.email})`);
 
         // Criar endereço padrão na tabela addresses COM GPS
         const newAddress = await Address.create({
@@ -87,8 +85,8 @@ exports.registerUser = async (req, res) => {
             complement,
             neighborhood,
             reference,
-            latitude,  // 🆕 GPS NO ENDEREÇO
-            longitude, // 🆕 GPS NO ENDEREÇO
+            latitude,  // 🆕 GPS SALVO AQUI
+            longitude, // 🆕 GPS SALVO AQUI
             isDefault: true
         });
 
@@ -112,8 +110,13 @@ exports.registerUser = async (req, res) => {
                 complement: user.complement,
                 neighborhood: user.neighborhood,
                 reference: user.reference,
-                latitude: user.latitude,   // 🆕 RETORNANDO GPS
-                longitude: user.longitude, // 🆕 RETORNANDO GPS
+                // 🆕 Incluir dados do endereço com GPS
+                defaultAddress: {
+                    id: newAddress.id,
+                    latitude: newAddress.latitude,
+                    longitude: newAddress.longitude,
+                    isDefault: newAddress.isDefault
+                },
                 token
             }
         });
@@ -128,13 +131,25 @@ exports.registerUser = async (req, res) => {
     }
 };
 
-// Login de Cliente
+// Login de Cliente (busca GPS do endereço padrão)
 exports.loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Buscar usuário
-        const user = await User.findOne({ where: { email } });
+        // Buscar usuário com endereço padrão
+        const user = await User.findOne({ 
+            where: { email },
+            include: [
+                {
+                    model: Address,
+                    as: 'addresses',
+                    where: { isDefault: true },
+                    required: false, // LEFT JOIN para não falhar se não tiver endereço
+                    attributes: ['id', 'latitude', 'longitude', 'street', 'municipality', 'province']
+                }
+            ]
+        });
+
         if (!user) {
             return res.status(401).json({
                 success: false,
@@ -154,6 +169,11 @@ exports.loginUser = async (req, res) => {
         // Gerar token
         const token = generateToken(user.id, 'user');
 
+        // Pegar endereço padrão (se existir)
+        const defaultAddress = user.addresses && user.addresses.length > 0 
+            ? user.addresses[0] 
+            : null;
+
         res.json({
             success: true,
             message: 'Login realizado com sucesso',
@@ -162,8 +182,15 @@ exports.loginUser = async (req, res) => {
                 name: user.name,
                 email: user.email,
                 phone: user.phone,
-                latitude: user.latitude,   // Retornar GPS do usuário
-                longitude: user.longitude,
+                // 🆕 Incluir GPS do endereço padrão
+                defaultAddress: defaultAddress ? {
+                    id: defaultAddress.id,
+                    latitude: defaultAddress.latitude,
+                    longitude: defaultAddress.longitude,
+                    street: defaultAddress.street,
+                    municipality: defaultAddress.municipality,
+                    province: defaultAddress.province
+                } : null,
                 token
             }
         });
@@ -322,8 +349,8 @@ exports.getProfile = async (req, res) => {
                             'complement',
                             'neighborhood',
                             'reference',
-                            'latitude',  // 🆕 Incluir GPS
-                            'longitude', // 🆕 Incluir GPS
+                            'latitude',  // 🆕 GPS DO ENDEREÇO
+                            'longitude', // 🆕 GPS DO ENDEREÇO
                             'isDefault'
                         ]
                     }

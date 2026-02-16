@@ -80,6 +80,13 @@ module.exports = (sequelize, DataTypes) => {
   User.prototype.comparePassword = async function (candidatePassword) {
     return bcrypt.compare(candidatePassword, this.password);
   };
+  User.associate = function(models) {
+    User.hasMany(models.Address, {
+      foreignKey: 'userId',
+      as: 'addresses',
+      onDelete: 'CASCADE'
+    });
+  };
 
   return User;
 };
