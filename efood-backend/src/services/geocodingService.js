@@ -120,9 +120,9 @@ class GeocodingService {
     }
   }
 
-  // Calcular preço de entrega (200 Kz por km)
+  // Calcular preço de entrega (300 Kz por km)
   static calculateDeliveryPrice(distanceKm) {
-    const pricePerKm = 200;
+    const pricePerKm = 300;
     const minPrice = 500;
     
     const price = Math.ceil(distanceKm) * pricePerKm;
