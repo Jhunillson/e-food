@@ -80,7 +80,8 @@ exports.calculateDeliveryPrice = async (req, res) => {
   }
 };
 
-// Obter restaurantes próximos
+// VERSÃO OTIMIZADA - Substitua a função getNearbyRestaurants no deliveryPriceController.js
+
 exports.getNearbyRestaurants = async (req, res) => {
   try {
     const { latitude, longitude, radius = 10 } = req.query;
@@ -92,24 +93,37 @@ exports.getNearbyRestaurants = async (req, res) => {
       });
     }
 
+    console.log(`🔍 Buscando restaurantes próximos: lat=${latitude}, lon=${longitude}, radius=${radius}km`);
+
+    // 🔧 QUERY OTIMIZADA - calcula distância apenas uma vez
     const query = `
+      WITH distances AS (
+        SELECT 
+          id,
+          name,
+          address,
+          latitude,
+          longitude,
+          calculate_distance(:lat, :lon, latitude, longitude) as distance_km
+        FROM restaurants
+        WHERE latitude IS NOT NULL 
+          AND longitude IS NOT NULL
+          AND "isActive" = true
+      )
       SELECT 
         id,
         name,
         address,
         latitude,
         longitude,
-        ROUND(
-          calculate_distance(:lat, :lon, latitude, longitude), 
-          2
-        ) as distance_km
-      FROM restaurants
-      WHERE latitude IS NOT NULL 
-        AND longitude IS NOT NULL
-        AND calculate_distance(:lat, :lon, latitude, longitude) <= :radius
+        ROUND(distance_km, 2) as distance_km
+      FROM distances
+      WHERE distance_km <= :radius
       ORDER BY distance_km ASC
       LIMIT 20
     `;
+
+    const startTime = Date.now();
 
     const restaurants = await sequelize.query(query, {
       replacements: {
@@ -120,14 +134,16 @@ exports.getNearbyRestaurants = async (req, res) => {
       type: sequelize.QueryTypes.SELECT
     });
 
+    const duration = Date.now() - startTime;
+    console.log(`✅ Query executada em ${duration}ms - ${restaurants.length} restaurantes encontrados`);
+
     res.json({
       success: true,
       count: restaurants.length,
       data: restaurants
     });
-
   } catch (error) {
-    console.error('Erro ao buscar restaurantes próximos:', error);
+    console.error('❌ Erro ao buscar restaurantes próximos:', error);
     res.status(500).json({ 
       success: false, 
       message: 'Erro ao buscar restaurantes próximos',
