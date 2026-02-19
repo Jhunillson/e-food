@@ -1,49 +1,51 @@
 const { Restaurant, MenuItem } = require('../models');
 
+// Substitua a função getAllRestaurants no restaurantController.js
+
 exports.getAllRestaurants = async (req, res) => {
-    const startTotal = Date.now();
-    console.log('🔵 Iniciando getAllRestaurants');
-    
-    try {
-        console.time('  └─ Query');
-        const restaurants = await Restaurant.findAll({
-            where: { isActive: true },
-            attributes: [
-                'id',
-                'name', 
-                'icon',
-                'image_url',  
-                'category',
-                'cuisine',
-                'rating',
-                'minTime',
-                'maxTime',
-                'isOpen',
-                'isActive'
-            ],
-            order: [['rating', 'DESC']],
-            limit: 20,  // ← Reduzi para 20 também
-            raw: true
-        });
-        console.timeEnd('  └─ Query');
-        console.log(`  └─ Retornou ${restaurants.length} restaurantes`);
-        
-        console.time('  └─ JSON stringify');
-        const json = JSON.stringify({ success: true, data: restaurants });
-        console.timeEnd('  └─ JSON stringify');
-        console.log(`  └─ Tamanho: ${(json.length / 1024).toFixed(2)} KB`);
-        
-        res.json({ success: true, data: restaurants });
-        
-        console.log(`✅ Total: ${Date.now() - startTotal}ms\n`);
-    } catch (error) {
-        console.error('❌ Erro:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Erro ao buscar restaurantes',
-            error: error.message
-        });
-    }
+  const startTotal = Date.now();
+  console.log('🔵 Iniciando getAllRestaurants');
+  
+  try {
+      console.time('  └─ Query');
+      const restaurants = await Restaurant.findAll({
+          where: { isActive: true },
+          attributes: [
+              'id',
+              'name', 
+              'icon',
+              'image_url',  
+              'category',
+              'cuisine',
+              'rating',
+              'minTime',
+              'maxTime',
+              'isOpen',
+              'isActive'
+          ],
+          order: [['rating', 'DESC']],
+          limit: 20,
+          raw: true
+      });
+      console.timeEnd('  └─ Query');
+      console.log(`  └─ Retornou ${restaurants.length} restaurantes`); // ✅ CORRIGIDO
+      
+      console.time('  └─ JSON stringify');
+      const json = JSON.stringify({ success: true, data: restaurants });
+      console.timeEnd('  └─ JSON stringify');
+      console.log(`  └─ Tamanho: ${(json.length / 1024).toFixed(2)} KB`); // ✅ CORRIGIDO
+      
+      res.json({ success: true, data: restaurants });
+      
+      console.log(`✅ Total: ${Date.now() - startTotal}ms\n`); // ✅ CORRIGIDO
+  } catch (error) {
+      console.error('❌ Erro:', error);
+      res.status(500).json({
+          success: false,
+          message: 'Erro ao buscar restaurantes',
+          error: error.message
+      });
+  }
 };
 
 // Mantenha as outras funções como estavam
