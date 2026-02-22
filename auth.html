@@ -166,6 +166,22 @@
                                 <input type="text" id="registerReference" required>
                             </div>
 
+                            <!-- 🆕 GPS Section -->
+                            <div class="gps-container" id="gpsContainer">
+                                <h4 style="margin-top: 0; color: #FF6B35;">📍 Localização GPS (Obrigatório)</h4>
+                                <p style="font-size: 14px; color: #666; margin-bottom: 15px;">
+                                    Para calcular o valor da entrega, precisamos da sua localização exata.
+                                </p>
+                                
+                                <button type="button" id="getGPSButton">
+                                    📍 Obter Minha Localização
+                                </button>
+                                
+                                <div id="gpsStatus" class="gps-status"></div>
+                                
+                                <div id="gpsCoords" class="gps-coords"></div>
+                            </div>
+
                         </div>
 
                         <div class="form-options">
