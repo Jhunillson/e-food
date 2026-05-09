@@ -6,22 +6,45 @@ let currentStep = 1;
 let orderData = {
     address: {},
     payment: {},
-    restaurant: {}
+    restaurant: {},
+    deliveryFee: 500.00
 };
 let addressSelect = null;
 let addressText = null;
 
-// Calcular taxa de entrega baseada no horário
-function calculateDeliveryFee() {
-    const now = new Date();
-    const hour = now.getHours();
-    
-    // Após 21h (21:00), a taxa é Kz 1000, antes disso é Kz 500
-    if (hour >= 21 || hour < 6) {
-        return 1000.00;
-    } else {
-        return 500.00;
+// Taxa estática de fallback baseada no horário
+function staticDeliveryFee() {
+    const hour = new Date().getHours();
+    return (hour >= 21 || hour < 6) ? 1000.00 : 500.00;
+}
+
+// Calcular taxa de entrega via GPS (com fallback estático)
+async function fetchDeliveryFee(address) {
+    try {
+        const restaurantInfo = JSON.parse(sessionStorage.getItem('restaurant') || '{}');
+        const restaurantId = restaurantInfo.restaurantId;
+        if (!restaurantId || !address || !address.municipality) {
+            return staticDeliveryFee();
+        }
+
+        const token = sessionStorage.getItem('token') || localStorage.getItem('token');
+        const headers = { 'Content-Type': 'application/json' };
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+
+        const response = await fetch(`${API_URL}/delivery-price/calculate-by-address`, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({ restaurantId, address })
+        });
+
+        const result = await response.json();
+        if (result.success && result.data && result.data.deliveryPrice) {
+            return result.data.deliveryPrice;
+        }
+    } catch (err) {
+        console.warn('Falha no cálculo GPS, usando taxa fixa:', err.message);
     }
+    return staticDeliveryFee();
 }
 
 // Atualizar visualização do endereço selecionado
@@ -69,12 +92,12 @@ function changeCheckoutAddress() {
     if (selectedAddress) {
         orderData.address = selectedAddress;
         console.log('✅ Endereço selecionado para checkout:', selectedAddress);
-        
-        // Atualizar visualização
+
         updateAddressDisplay(selectedAddress);
-        
-        // Mostrar notificação
         showAddressChangeNotification(selectedAddress);
+
+        // Recalcular taxa de entrega com novo endereço
+        updateDeliveryFeeDisplay();
     }
 }
 
@@ -284,28 +307,41 @@ function updateOrderSummary() {
         summaryItems.appendChild(itemDiv);
     });
     
-    // Calcular totais
+    // Calcular totais (usa taxa já calculada ou fallback estático)
     const subtotal = cart.reduce((sum, item) => sum + (parseFloat(item.price) * item.quantity), 0);
-    const deliveryFee = calculateDeliveryFee();
+    const deliveryFee = orderData.deliveryFee || staticDeliveryFee();
     const total = subtotal + deliveryFee;
-    
-    const hour = new Date().getHours();
-    let deliveryFeeText = `Kz ${formatCurrency(deliveryFee)}`;
-    
-    if (hour >= 21 || hour < 6) {
-        deliveryFeeText += ' <span style="color: #ff6b35; font-size: 0.85rem;">(⏰ Horário noturno)</span>';
-    }
-    
+
     document.getElementById('summarySubtotal').textContent = `Kz ${formatCurrency(subtotal)}`;
-    
+    document.getElementById('summaryTotal').textContent = `Kz ${formatCurrency(total)}`;
+
     const deliveryFeeElement = document.getElementById('summaryDeliveryFee');
     if (deliveryFeeElement) {
-        deliveryFeeElement.innerHTML = deliveryFeeText;
+        deliveryFeeElement.innerHTML = `Kz ${formatCurrency(deliveryFee)}`;
     }
-    
-    document.getElementById('summaryTotal').textContent = `Kz ${formatCurrency(total)}`;
-    
-    orderData.deliveryFee = deliveryFee;
+}
+
+// Atualizar display da taxa de entrega (chamado após selecionar endereço)
+async function updateDeliveryFeeDisplay() {
+    const deliveryFeeElement = document.getElementById('summaryDeliveryFee');
+    const summaryTotalElement = document.getElementById('summaryTotal');
+
+    if (deliveryFeeElement) {
+        deliveryFeeElement.innerHTML = '⏳ A calcular...';
+    }
+
+    const fee = await fetchDeliveryFee(orderData.address);
+    orderData.deliveryFee = fee;
+
+    const subtotal = cart.reduce((sum, item) => sum + (parseFloat(item.price) * item.quantity), 0);
+    const total = subtotal + fee;
+
+    if (deliveryFeeElement) {
+        deliveryFeeElement.innerHTML = `Kz ${formatCurrency(fee)}`;
+    }
+    if (summaryTotalElement) {
+        summaryTotalElement.textContent = `Kz ${formatCurrency(total)}`;
+    }
 }
 
 // Formatar moeda angolana
@@ -523,7 +559,7 @@ async function finishOrder() {
     if (!confirm(confirmMsg)) return;
 
     const subtotal = cart.reduce((sum, item) => sum + (parseFloat(item.price) * item.quantity), 0);
-    const deliveryFee = calculateDeliveryFee();
+    const deliveryFee = orderData.deliveryFee || staticDeliveryFee();
     const total = subtotal + deliveryFee;
 
     const restaurantInfo = JSON.parse(sessionStorage.getItem('restaurant') || '{}');
@@ -818,9 +854,11 @@ async function loadAddresses() {
 
         orderData.address = defaultAddress;
         console.log("✅ Endereço padrão aplicado no checkout:", orderData.address);
-        
-        // Atualizar display visual
+
         updateAddressDisplay(defaultAddress);
+
+        // Calcular taxa de entrega com endereço padrão
+        updateDeliveryFeeDisplay();
     }
 }
 
@@ -837,20 +875,18 @@ function confirmAddress() {
 
     const selectedAddress = userAddresses[selectedIndex];
 
-    // 1. Atualizar orderData com o objeto de endereço selecionado
     orderData.address = selectedAddress;
 
-    // 2. Atualizar o texto de exibição
-    addressText.textContent = 
+    addressText.textContent =
         `${selectedAddress.label || 'Endereço'} - ${selectedAddress.street}, ${selectedAddress.number}`;
 
-    // 3. Atualizar display visual
     updateAddressDisplay(selectedAddress);
-
-    // 4. Fechar o modal
     closeAddressModal();
-    
+
     console.log("✅ Endereço confirmado para o pedido:", orderData.address);
+
+    // Recalcular taxa de entrega com endereço confirmado
+    updateDeliveryFeeDisplay();
 }
 
 // ------------------------------

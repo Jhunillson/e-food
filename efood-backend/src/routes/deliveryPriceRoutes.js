@@ -11,6 +11,12 @@ router.post('/calculate-price',
   deliveryPriceController.calculateDeliveryPrice
 );
 
+// Calcular preço de entrega por endereço inline (sem addressId)
+// Body: { restaurantId: number, address: { street, number, neighborhood, municipality, province } }
+router.post('/calculate-by-address',
+  deliveryPriceController.calculateByAddress
+);
+
 // Buscar restaurantes próximos à localização do usuário
 // Query params: latitude, longitude, radius (opcional, padrão 10km)
 // Retorna: array de restaurantes com distância

@@ -152,4 +152,68 @@ exports.getNearbyRestaurants = async (req, res) => {
   }
 };
 
+// Calcular preço de entrega por endereço inline (sem addressId)
+exports.calculateByAddress = async (req, res) => {
+  try {
+    const { restaurantId, address } = req.body;
+
+    if (!restaurantId || !address) {
+      return res.status(400).json({
+        success: false,
+        message: 'restaurantId e address são obrigatórios'
+      });
+    }
+
+    if (!address.municipality && !address.province) {
+      return res.status(400).json({
+        success: false,
+        message: 'Endereço incompleto: municipality ou province são obrigatórios'
+      });
+    }
+
+    const restaurant = await Restaurant.findByPk(restaurantId);
+    if (!restaurant) {
+      return res.status(404).json({
+        success: false,
+        message: 'Restaurante não encontrado'
+      });
+    }
+
+    let restaurantCoords;
+    if (restaurant.latitude && restaurant.longitude) {
+      restaurantCoords = { latitude: parseFloat(restaurant.latitude), longitude: parseFloat(restaurant.longitude) };
+    } else {
+      restaurantCoords = await GeocodingService.geocodeAddress(restaurant.address || restaurant.name);
+    }
+
+    const clientCoords = await GeocodingService.geocodeAddress(address);
+
+    const distance = await GeocodingService.calculateDistance(
+      sequelize,
+      restaurantCoords,
+      clientCoords
+    );
+
+    const deliveryPrice = GeocodingService.calculateDeliveryPrice(distance);
+
+    res.json({
+      success: true,
+      data: {
+        distance: Math.round(distance * 100) / 100,
+        deliveryPrice,
+        restaurant: { name: restaurant.name },
+        clientAddress: { municipality: address.municipality, province: address.province }
+      }
+    });
+
+  } catch (error) {
+    console.error('Erro ao calcular preço por endereço:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erro ao calcular preço de entrega',
+      error: error.message
+    });
+  }
+};
+
 module.exports = exports;
